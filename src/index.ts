@@ -13,32 +13,35 @@ const outputassecret = core.getInput("outputasecret");
 const authtoken = core.getInput("authtoken");
 const decodebase64 = core.getInput("decodebase64");
 
-let url = baseurl + path;
-console.log(`Connecting to ${url}`);
+connectToConfigServer(baseurl, path);
 
-fetch(url, {
-//  method: "POST",
-  headers: {
-    Authorization: "Bearer " + getAuthToken(),
-  },
-  cache: "no-store"
-})
-  .then((response) => {
-    processResponse(response);
+async function connectToConfigServer(baseurl: string, path: string) {
+  let url = baseurl + path;
+  console.log(`Connecting to ${url}`);
+    fetch(url, {
+    //  method: "POST",
+    headers: {
+      Authorization: "Bearer " + getAuthToken(),
+    },
+    cache: "no-store",
   })
-  .catch((error: Error) => {
-    core.error("Failed to connect to " + url);
-    core.setFailed(`Failed to connect to ${url}`);
-  });
+    .then((response) => {
+      processResponse(response);
+    })
+    .catch((error: Error) => {
+      core.error("Failed to connect to " + url);
+      core.setFailed(`Failed to connect to ${url}`);
+    });
+}
 
 async function processResponse(response: Response) {
   if (response.status === 200) {
     core.debug("Successfully fetched cloud config!");
     let json = await response.json();
-//    console.log("json=" + JSON.stringify(json));
+    //    console.log("json=" + JSON.stringify(json));
 
     let propertySource = json["propertySources"];
-  //  console.log("propertySource=" + JSON.stringify(propertySource));
+    //  console.log("propertySource=" + JSON.stringify(propertySource));
     let source = propertySource[0]["source"];
     //console.log("source=" + JSON.stringify(source));
     let value = source[property];
@@ -47,16 +50,17 @@ async function processResponse(response: Response) {
     if (value.startsWith("base64:")) {
       if (decodebase64 === "true") {
         let valuesub = value.substring(7);
-        value = atob(valuesub)
+        value = atob(valuesub);
         console.log("Decoded Value=" + value);
-      }
-      else {
-        console.warn("Value starts with a base64 prefix but decodebase64 has not been set")
+      } else {
+        console.warn(
+          "Value starts with a base64 prefix but decodebase64 has not been set"
+        );
       }
     }
 
     if (maskassecret === "true") {
-      core.setSecret(value)      
+      core.setSecret(value);
     }
     if (outputasenvvar === "true") {
       console.log("outputasenvvar");
