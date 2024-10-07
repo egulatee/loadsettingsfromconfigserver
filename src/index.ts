@@ -50,6 +50,9 @@ async function processResponse(response: Response) {
         value = atob(valuesub)
         console.log("Decoded Value=" + value);
       }
+      else {
+        console.warn("Value starts with a base64 prefix but decodebase64 has not been set")
+      }
     }
 
     if (maskassecret === "true") {

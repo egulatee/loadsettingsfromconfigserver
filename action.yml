@@ -18,14 +18,7 @@ inputs:
     description: 'variable to set'
     required: true
     type: string
-  # environmentvariabletoset:
-  #   description: 'Environment variable to set'
-  #   required: true
-  #   type: string
-  # secretvariabletoset:
-  #   description: 'Secret variable to set'
-  #   required: true
-  #   type: string
+
   maskassecret:
     description: 'Mask as a secret?'
     required: optional
@@ -34,6 +27,7 @@ inputs:
     description: 'Output as a env var'
     optional: true
     type: boolean
+  #Unimplemented for now
   outputassecret:
     description: 'Output as a secret'
     optional: true
