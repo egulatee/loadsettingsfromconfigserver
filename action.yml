@@ -26,13 +26,17 @@ inputs:
   #   description: 'Secret variable to set'
   #   required: true
   #   type: string
-  outputassecret:
-    description: 'Output as a secret?'
-    required: true
+  maskassecret:
+    description: 'Mask as a secret?'
+    required: optional
     type: boolean
   outputasenvvar:
     description: 'Output as a env var'
-    required: true
+    optional: true
+    type: boolean
+  outputasenvvar:
+    description: 'Output as a secret'
+    optional: true
     type: boolean
   authtoken:
     description: 'Auth Token for Config Server'

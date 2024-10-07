@@ -6,8 +6,9 @@ const property = core.getInput("propertytoretrieve");
 const variabletoset = core.getInput("variabletoset");
 //const environmentvariabletoset = core.getInput("environmentvariabletoset");
 //const secretvariabletoset = core.getInput("secretvariabletoset");
-const outputassecret = core.getInput("outputassecret");
+const maskassecret = core.getInput("maskassecret");
 const outputasenvvar = core.getInput("outputasenvvar");
+const outputassecret = core.getInput("outputasecret");
 
 const authtoken = core.getInput("authtoken");
 const decodebase64 = core.getInput("decodebase64");
@@ -34,14 +35,14 @@ async function processResponse(response: Response) {
   if (response.status === 200) {
     core.debug("Successfully fetched cloud config!");
     let json = await response.json();
-    console.log("json=" + JSON.stringify(json));
+//    console.log("json=" + JSON.stringify(json));
 
     let propertySource = json["propertySources"];
-    console.log("propertySource=" + JSON.stringify(propertySource));
+  //  console.log("propertySource=" + JSON.stringify(propertySource));
     let source = propertySource[0]["source"];
-    console.log("source=" + JSON.stringify(source));
+    //console.log("source=" + JSON.stringify(source));
     let value = source[property];
-    console.log("value=" + value);
+    //console.log("value=" + value);
 
     if (value.startsWith("base64:")) {
       if (decodebase64 === "true") {
@@ -51,6 +52,9 @@ async function processResponse(response: Response) {
       }
     }
 
+    if (maskassecret === "true") {
+      core.setSecret(value)      
+    }
     if (outputasenvvar === "true") {
       console.log("outputasenvvar");
       console.log("setting[" + variabletoset + "] to value[" + value + "]");
