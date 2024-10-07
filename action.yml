@@ -38,7 +38,7 @@ inputs:
     description: 'Auth Token for Config Server'
     required: true
     type: string
-  convertbase64:
+  decodebase64:
     description: 'If a value starts with base64: convert it'
     required: false
     type: boolean

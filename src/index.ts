@@ -10,7 +10,7 @@ const outputassecret = core.getInput("outputassecret");
 const outputasenvvar = core.getInput("outputasenvvar");
 
 const authtoken = core.getInput("authtoken");
-const convertbase64 = core.getInput("convertbase64");
+const decodebase64 = core.getInput("decodebase64");
 
 let url = baseurl + path;
 console.log(`Connecting to ${url}`);
@@ -44,7 +44,7 @@ async function processResponse(response: Response) {
     console.log("value=" + value);
 
     if (value.startsWith("base64:")) {
-      if (convertbase64 === "true") {
+      if (decodebase64 === "true") {
         let valuesub = value.substring(7);
         value = atob(valuesub)
         console.log("Decoded Value=" + value);
