@@ -1,0 +1,25 @@
+{
+  "name": "@changesets/action",
+  "version": "1.4.8",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.7.4",
+    "prettier": "^2.0.5",
+    "typescript": "^5.0.4"
+  },
+  "scripts": {
+    "build": "ncc build src/index.ts -o dist --transpile-only --minify"
+  },
+  "engines": {
+    "node": ">= 20"
+  },
+  "dependencies": {
+    "@actions/core": "^1.11.0",
+    "@actions/github": "^6.0.0",
+    "@octokit/core": "^5.2.0",
+    "@vercel/ncc": "^0.38.2",
+    "tweetsodium": "^0.0.6"
+  },
+  "prettier": {}
+}

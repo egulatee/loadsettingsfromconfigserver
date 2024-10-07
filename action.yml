@@ -1,0 +1,45 @@
+name: 'LoadFromSpringCloudConfigServer'
+description: 'Sets Env and Secrets from a Spring Cloud Config Server'
+
+inputs:
+  cloud_config_server_base_url:
+    description: 'Base URL of cloud config server'
+    required: true
+    type: string
+  path:
+    description: 'Path on cloud config server'
+    required: true
+    type: string
+  propertytoretrieve:
+    description: 'Property to retrieve'
+    required: true
+    type: string
+  variabletoset:
+    description: 'variable to set'
+    required: true
+    type: string
+  # environmentvariabletoset:
+  #   description: 'Environment variable to set'
+  #   required: true
+  #   type: string
+  # secretvariabletoset:
+  #   description: 'Secret variable to set'
+  #   required: true
+  #   type: string
+  outputassecret:
+    description: 'Output as a secret?'
+    required: true
+    type: boolean
+  outputasenvvar:
+    description: 'Output as a env var'
+    required: true
+    type: boolean
+  authtoken:
+    description: 'Auth Token for Config Server'
+    required: true
+    type: string
+
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
