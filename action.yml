@@ -34,7 +34,7 @@ inputs:
     description: 'Output as a env var'
     optional: true
     type: boolean
-  outputasenvvar:
+  outputassecret:
     description: 'Output as a secret'
     optional: true
     type: boolean
