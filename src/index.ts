@@ -19,6 +19,7 @@ fetch(url, {
   headers: {
     Authorization: "Bearer " + getAuthToken(),
   },
+  cache: "no-store"
 })
   .then((response) => {
     processResponse(response);
