@@ -25671,10 +25671,10 @@ const baseurl = core.getInput("cloud_config_server_base_url");
 const path = core.getInput("path");
 const property = core.getInput("propertytoretrieve");
 const variabletoset = core.getInput("variabletoset");
-const maskassecret = core.getBooleanInput("maskassecret");
-const outputasenvvar = core.getBooleanInput("outputasenvvar");
-const outputassecret = core.getBooleanInput("outputasecret");
-const decodebase64 = core.getBooleanInput("decodebase64");
+const maskassecret = stringToBoolean(core.getInput("maskassecret"));
+const outputasenvvar = stringToBoolean(core.getInput("outputasenvvar"));
+const outputassecret = stringToBoolean(core.getInput("outputasecret"));
+const decodebase64 = stringToBoolean(core.getInput("decodebase64"));
 main();
 async function main() {
     let accessToken = await getToken();
@@ -25765,6 +25765,10 @@ async function getToken() {
         console.error('Error getting token:', error);
         throw error;
     }
+}
+function stringToBoolean(str) {
+    return str
+        .toLowerCase() === 'true';
 }
 
 
