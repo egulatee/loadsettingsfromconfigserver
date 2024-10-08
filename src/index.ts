@@ -14,7 +14,6 @@ const outputasenvvar = stringToBoolean(core.getInput("outputasenvvar"));
 const outputassecret = stringToBoolean(core.getInput("outputasecret"));
 const decodebase64 = stringToBoolean(core.getInput("decodebase64"));
 
-
 main()
 
 async function main() {
@@ -69,7 +68,7 @@ async function processResponse(response: Response) {
       console.log("outputasenvvar");
 
       let varname
-      if (variabletoset === null) {
+      if (variabletoset === undefined) {
         varname = property
       }
       else {
