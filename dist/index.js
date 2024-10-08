@@ -25722,7 +25722,7 @@ async function processResponse(response) {
         if (outputasenvvar === true) {
             console.log("outputasenvvar");
             let varname;
-            if (variabletoset === null) {
+            if (variabletoset === undefined) {
                 varname = property;
             }
             else {
