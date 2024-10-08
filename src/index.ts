@@ -97,7 +97,7 @@ async function getToken(): Promise<string> {
     client_id: CLIENT_ID,
     client_secret: CLIENT_SECRET,
   };
-  console.log("Data=" + data);
+  console.log("Data=" + JSON.stringify(data));
 
   try {
     const response = await fetch(tokenEndpoint,
