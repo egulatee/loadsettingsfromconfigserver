@@ -1,18 +1,19 @@
 import * as core from "@actions/core";
 
+const AUTH_TOKEN_ENDPOINT = core.getInput("AUTH_TOKEN_ENDPOINT")
+const CLIENT_ID = core.getInput("CLIENT_ID")
+const CLIENT_SECRET = core.getInput("CLIENT_SECRET")
+
 const baseurl = core.getInput("cloud_config_server_base_url");
 const path = core.getInput("path");
 const property = core.getInput("propertytoretrieve");
 const variabletoset = core.getInput("variabletoset");
+
 const maskassecret = core.getBooleanInput("maskassecret");
 const outputasenvvar = core.getBooleanInput("outputasenvvar");
 const outputassecret = core.getBooleanInput("outputasecret");
-
 const decodebase64 = core.getBooleanInput("decodebase64");
 
-const AUTH_TOKEN_ENDPOINT = core.getInput("AUTH_TOKEN_ENDPOINT")
-const CLIENT_ID = core.getInput("CLIENT_ID")
-const CLIENT_SECRET = core.getInput("CLIENT_SECRET")
 
 main()
 

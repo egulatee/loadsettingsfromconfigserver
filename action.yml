@@ -2,6 +2,19 @@ name: 'LoadFromSpringCloudConfigServer'
 description: 'Sets Env and Secrets from a Spring Cloud Config Server'
 
 inputs:
+  AUTH_TOKEN_ENDPOINT:
+    description: 'Auth Token Endpoint'
+    required: false
+    type: string
+  CLIENT_ID:
+    description: 'OAuth2 ClientId'
+    required: false
+    type: string
+  CLIENT_SECRET:
+    description: 'OAuth2 Secret'
+    required: false
+    type: string
+
   cloud_config_server_base_url:
     description: 'Base URL of cloud config server'
     required: true
@@ -14,6 +27,7 @@ inputs:
     description: 'Property to retrieve'
     required: true
     type: string
+
   variabletoset:
     description: 'variable to set.  Will use propertytoretrieve if nothing is set'
     optional: true
@@ -40,18 +54,6 @@ inputs:
     type: boolean
     default: false
 
-  AUTH_TOKEN_ENDPOINT:
-    description: 'Auth Token Endpoint'
-    required: false
-    type: string
-  CLIENT_ID:
-    description: 'OAuth2 ClientId'
-    required: false
-    type: string
-  CLIENT_SECRET:
-    description: 'OAuth2 Secret'
-    required: false
-    type: string
 
 runs:
   using: 'node20'
