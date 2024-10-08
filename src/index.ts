@@ -14,13 +14,13 @@ const AUTH_TOKEN_ENDPOINT = core.getInput("AUTH_TOKEN_ENDPOINT")
 const CLIENT_ID = core.getInput("CLIENT_ID")
 const CLIENT_SECRET = core.getInput("CLIENT_SECRET")
 
+main()
 
 async function main() {
   let accessToken = await getToken();
   console.log("Access Token=" + accessToken)
   connectToConfigServer(baseurl, path, accessToken);
 }
-
 
 async function connectToConfigServer(baseurl: string, path: string, accessToken: string) {
   let url = baseurl + path;
