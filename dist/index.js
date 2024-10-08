@@ -25722,7 +25722,7 @@ async function processResponse(response) {
         if (outputasenvvar === true) {
             console.log("outputasenvvar");
             let varname;
-            if (variabletoset === undefined) {
+            if (isUndefinedEmptyOrNull(variabletoset)) {
                 varname = property;
             }
             else {
@@ -25769,6 +25769,12 @@ async function getToken() {
 function stringToBoolean(str) {
     return str
         .toLowerCase() === 'true';
+}
+function isUndefinedEmptyOrNull(str) {
+    if (str === undefined || str === null || str === '') {
+        return true;
+    }
+    return false;
 }
 
 
