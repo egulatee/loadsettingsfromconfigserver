@@ -4,11 +4,11 @@ const baseurl = core.getInput("cloud_config_server_base_url");
 const path = core.getInput("path");
 const property = core.getInput("propertytoretrieve");
 const variabletoset = core.getInput("variabletoset");
-const maskassecret = core.getInput("maskassecret");
-const outputasenvvar = core.getInput("outputasenvvar");
-const outputassecret = core.getInput("outputasecret");
+const maskassecret = core.getBooleanInput("maskassecret");
+const outputasenvvar = core.getBooleanInput("outputasenvvar");
+const outputassecret = core.getBooleanInput("outputasecret");
 
-const decodebase64 = core.getInput("decodebase64");
+const decodebase64 = core.getBooleanInput("decodebase64");
 
 const AUTH_TOKEN_ENDPOINT = core.getInput("AUTH_TOKEN_ENDPOINT")
 const CLIENT_ID = core.getInput("CLIENT_ID")
@@ -50,7 +50,7 @@ async function processResponse(response: Response) {
     let value = source[property];
 
     if (value.startsWith("base64:")) {
-      if (decodebase64 === "true") {
+      if (decodebase64 === true) {
         let valuesub = value.substring(7);
         value = atob(valuesub);
         console.log("Decoded Value=" + value);
@@ -61,15 +61,23 @@ async function processResponse(response: Response) {
       }
     }
 
-    if (maskassecret === "true") {
+    if (maskassecret === true) {
       core.setSecret(value);
     }
-    if (outputasenvvar === "true") {
+    if (outputasenvvar === true) {
       console.log("outputasenvvar");
-      console.log("setting[" + variabletoset + "] to value[" + value + "]");
-      core.exportVariable(variabletoset, value);
+
+      let varname
+      if (variabletoset === null) {
+        varname = property
+      }
+      else {
+        varname = variabletoset
+      }
+      console.log("setting[" + varname + "] to value[" + value + "]");
+      core.exportVariable(varname, value);
     }
-    if (outputassecret === "true") {
+    if (outputassecret === true) {
       console.error("Not implemented");
       core.setFailed("Setting secret isn't implemented");
     }

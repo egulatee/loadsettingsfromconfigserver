@@ -15,32 +15,30 @@ inputs:
     required: true
     type: string
   variabletoset:
-    description: 'variable to set'
-    required: true
+    description: 'variable to set.  Will use propertytoretrieve if nothing is set'
+    optional: true
     type: string
-
   maskassecret:
     description: 'Mask as a secret?'
-    required: optional
+    optional: true
     type: boolean
+    default: false
   outputasenvvar:
     description: 'Output as a env var'
     optional: true
     type: boolean
+    default: true
   #Unimplemented for now
   outputassecret:
     description: 'Output as a secret'
     optional: true
     type: boolean
-  authtoken:
-    description: 'Auth Token for Config Server'
-    required: true
-    type: string
+    default: false
   decodebase64:
     description: 'If a value starts with base64: convert it'
     required: false
     type: boolean
-
+    default: false
 
   AUTH_TOKEN_ENDPOINT:
     description: 'Auth Token Endpoint'
