@@ -4,24 +4,31 @@ const baseurl = core.getInput("cloud_config_server_base_url");
 const path = core.getInput("path");
 const property = core.getInput("propertytoretrieve");
 const variabletoset = core.getInput("variabletoset");
-//const environmentvariabletoset = core.getInput("environmentvariabletoset");
-//const secretvariabletoset = core.getInput("secretvariabletoset");
 const maskassecret = core.getInput("maskassecret");
 const outputasenvvar = core.getInput("outputasenvvar");
 const outputassecret = core.getInput("outputasecret");
 
-const authtoken = core.getInput("authtoken");
 const decodebase64 = core.getInput("decodebase64");
 
-connectToConfigServer(baseurl, path);
+const AUTH_TOKEN_ENDPOINT = core.getInput("AUTH_TOKEN_ENDPOINT")
+const CLIENT_ID = core.getInput("CLIENT_ID")
+const CLIENT_SECRET = core.getInput("CLIENT_SECRET")
 
-async function connectToConfigServer(baseurl: string, path: string) {
+
+async function main() {
+  let accessToken = await getToken();
+  console.log("Access Token=" + accessToken)
+  connectToConfigServer(baseurl, path, accessToken);
+}
+
+
+async function connectToConfigServer(baseurl: string, path: string, accessToken: string) {
   let url = baseurl + path;
   console.log(`Connecting to ${url}`);
-    fetch(url, {
+  fetch(url, {
     //  method: "POST",
     headers: {
-      Authorization: "Bearer " + getAuthToken(),
+      Authorization: "Bearer " + accessToken,
     },
     cache: "no-store",
   })
@@ -38,14 +45,9 @@ async function processResponse(response: Response) {
   if (response.status === 200) {
     core.debug("Successfully fetched cloud config!");
     let json = await response.json();
-    //    console.log("json=" + JSON.stringify(json));
-
     let propertySource = json["propertySources"];
-    //  console.log("propertySource=" + JSON.stringify(propertySource));
     let source = propertySource[0]["source"];
-    //console.log("source=" + JSON.stringify(source));
     let value = source[property];
-    //console.log("value=" + value);
 
     if (value.startsWith("base64:")) {
       if (decodebase64 === "true") {
@@ -66,21 +68,47 @@ async function processResponse(response: Response) {
       console.log("outputasenvvar");
       console.log("setting[" + variabletoset + "] to value[" + value + "]");
       core.exportVariable(variabletoset, value);
-      //        core.setOutput(environmentvariabletoset, value);
     }
     if (outputassecret === "true") {
       console.error("Not implemented");
       core.setFailed("Setting secret isn't implemented");
-      // console.log("outputassecret")
-      // console.log("setting[" + environmentvariabletoset +"] to value[" + value + "]");
-      // core.setSecret(value);
-      // core.exportVariable(environmentvariabletoset, value)
     }
   } else {
     core.error("Failed to fetch cloud config!");
     throw new Error("Failed to fetch cloud config!");
   }
 }
-function getAuthToken() {
-  return authtoken;
+
+interface TokenResponse {
+  access_token: string;
+  expires_in: number;
+  refresh_expires_in: number;
+  token_type: string;
+  'not-before-policy': number;
+  scope: string;
+}
+
+async function getToken(): Promise<string> {
+  const tokenEndpoint = `${AUTH_TOKEN_ENDPOINT}`;
+  
+  const data = {
+    grant_type: 'client_credentials',
+    client_id: CLIENT_ID,
+    client_secret: CLIENT_SECRET,
+  };
+
+  try {
+    const response = await fetch(tokenEndpoint,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: JSON.stringify(data)
+      })
+      let json = await response.json();
+      let tokenResponse = json as TokenResponse
+      return tokenResponse.access_token;
+  } catch (error) {
+    console.error('Error getting token:', error);
+    throw error;
+  }
 }

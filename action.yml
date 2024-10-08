@@ -42,6 +42,19 @@ inputs:
     type: boolean
 
 
+  AUTH_TOKEN_ENDPOINT:
+    description: 'Auth Token Endpoint'
+    required: false
+    type: string
+  CLIENT_ID:
+    description: 'OAuth2 ClientId'
+    required: false
+    type: string
+  CLIENT_SECRET:
+    description: 'OAuth2 Secret'
+    required: false
+    type: string
+
 runs:
   using: 'node20'
   main: 'dist/index.js'
