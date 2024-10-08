@@ -90,12 +90,14 @@ interface TokenResponse {
 
 async function getToken(): Promise<string> {
   const tokenEndpoint = `${AUTH_TOKEN_ENDPOINT}`;
-  
+
+  console.log("Fetching token from " + tokenEndpoint);
   const data = {
     grant_type: 'client_credentials',
     client_id: CLIENT_ID,
     client_secret: CLIENT_SECRET,
   };
+  console.log("Data=" + data);
 
   try {
     const response = await fetch(tokenEndpoint,
@@ -105,6 +107,7 @@ async function getToken(): Promise<string> {
         body: JSON.stringify(data)
       })
       let json = await response.json();
+      console.log("Response=" + JSON.stringify(json));
       let tokenResponse = json as TokenResponse
       return tokenResponse.access_token;
   } catch (error) {
