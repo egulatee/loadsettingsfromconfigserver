@@ -104,7 +104,7 @@ async function getToken(): Promise<string> {
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: JSON.stringify(data)
+        body: new URLSearchParams(data)
       })
       let json = await response.json();
       console.log("Response=" + JSON.stringify(json));
