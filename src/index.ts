@@ -68,7 +68,7 @@ async function processResponse(response: Response) {
       console.log("outputasenvvar");
 
       let varname
-      if (variabletoset === undefined) {
+      if (isUndefinedEmptyOrNull(variabletoset)) {
         varname = property
       }
       else {
@@ -127,4 +127,11 @@ async function getToken(): Promise<string> {
 function stringToBoolean(str: string): boolean {
   return str
       .toLowerCase() === 'true';
+}
+
+function isUndefinedEmptyOrNull(str: string): boolean {
+  if (str === undefined || str === null || str === '') {
+    return true;
+  }
+  return false
 }
