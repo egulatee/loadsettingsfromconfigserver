@@ -1,9 +1,11 @@
 import * as core from "@actions/core";
+import * as github from '@actions/github';
 
 const AUTH_TOKEN_ENDPOINT = core.getInput("AUTH_TOKEN_ENDPOINT")
 const CLIENT_ID = core.getInput("CLIENT_ID")
 const CLIENT_SECRET = core.getInput("CLIENT_SECRET")
 
+const token = core.getInput('token', { required: true });
 const baseurl = core.getInput("cloud_config_server_base_url");
 const path = core.getInput("path");
 const property = core.getInput("propertytoretrieve");
@@ -14,11 +16,13 @@ const outputasenvvar = stringToBoolean(core.getInput("outputasenvvar"));
 const outputassecret = stringToBoolean(core.getInput("outputasecret"));
 const decodebase64 = stringToBoolean(core.getInput("decodebase64"));
 
+import { createOrUpdateSecretForRepo } from './github-api';
+
 main()
 
 async function main() {
-  let accessToken = await getToken();
-  console.log("Access Token=" + accessToken)
+  let accessToken = await getToken(AUTH_TOKEN_ENDPOINT, CLIENT_ID, CLIENT_SECRET);
+//  console.log("Access Token=" + accessToken)
   connectToConfigServer(baseurl, path, accessToken);
 }
 
@@ -64,22 +68,27 @@ async function processResponse(response: Response) {
     if (maskassecret === true) {
       core.setSecret(value);
     }
-    if (outputasenvvar === true) {
-      console.log("outputasenvvar");
 
-      let varname
-      if (isUndefinedEmptyOrNull(variabletoset)) {
-        varname = property
-      }
-      else {
-        varname = variabletoset
-      }
-      console.log("setting[" + varname + "] to value[" + value + "]");
+    let varname
+    if (isUndefinedEmptyOrNull(variabletoset)) {
+      varname = property
+    }
+    else {
+      varname = variabletoset
+    }
+
+    if (outputasenvvar === true) {
       core.exportVariable(varname, value);
+      core.setOutput('result', 'Environment Variable ' + varname + " set to value["  + value  + "]");
     }
     if (outputassecret === true) {
-      console.error("Not implemented");
-      core.setFailed("Setting secret isn't implemented");
+      // console.error("Not implemented");
+      // core.setFailed("Setting secret isn't implemented");
+      const octokit = github.getOctokit(token);
+      const { owner, repo } = github.context.repo;
+  
+      await createOrUpdateSecretForRepo(octokit, owner, repo, varname, value);
+      core.setOutput('result', 'Secret ' + varname + ' set successfully');
     }
   } else {
     core.error("Failed to fetch cloud config!");
@@ -87,42 +96,6 @@ async function processResponse(response: Response) {
   }
 }
 
-interface TokenResponse {
-  access_token: string;
-  expires_in: number;
-  refresh_expires_in: number;
-  token_type: string;
-  'not-before-policy': number;
-  scope: string;
-}
-
-async function getToken(): Promise<string> {
-  const tokenEndpoint = `${AUTH_TOKEN_ENDPOINT}`;
-
-  console.log("Fetching token from " + tokenEndpoint);
-  const data = {
-    grant_type: 'client_credentials',
-    client_id: CLIENT_ID,
-    client_secret: CLIENT_SECRET,
-  };
-  console.log("Data=" + JSON.stringify(data));
-
-  try {
-    const response = await fetch(tokenEndpoint,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(data)
-      })
-      let json = await response.json();
-      console.log("Response=" + JSON.stringify(json));
-      let tokenResponse = json as TokenResponse
-      return tokenResponse.access_token;
-  } catch (error) {
-    console.error('Error getting token:', error);
-    throw error;
-  }
-}
 
 function stringToBoolean(str: string): boolean {
   return str
