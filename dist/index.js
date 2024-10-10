@@ -30062,7 +30062,7 @@ async function processResponse(response) {
         }
         if (outputasenvvar === true) {
             core.exportVariable(varname, value);
-            core.setOutput('result', 'Environment Variable ' + varname + " set to value[" + value + "]");
+            core.setOutput('result', 'Environment Variable [' + varname + "] set to value[" + value + "]");
         }
         if (outputassecret === true) {
             // console.error("Not implemented");
@@ -30070,7 +30070,7 @@ async function processResponse(response) {
             const octokit = github.getOctokit(token);
             const { owner, repo } = github.context.repo;
             await (0, github_api_1.createOrUpdateSecretForRepo)(octokit, owner, repo, varname, value);
-            core.setOutput('result', 'Secret ' + varname + ' set successfully');
+            core.setOutput('result', 'Secret [' + varname + '] set successfully');
         }
     }
     else {
