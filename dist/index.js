@@ -33369,13 +33369,14 @@ async function processResponse(response) {
             if (decodebase64 === true) {
                 let valuesub = value.substring(7);
                 value = atob(valuesub);
-                console.log("Decoded Value=" + value);
+                //        console.log("Decoded Value=" + value);
             }
             else {
                 console.warn("Value starts with a base64 prefix but decodebase64 has not been set");
             }
         }
-        if (outputassecret === true) {
+        if (outputassecret) {
+            console.log("Value is a secret");
             core.setSecret(value);
         }
         let varname;
@@ -33385,13 +33386,14 @@ async function processResponse(response) {
         else {
             varname = variabletoset;
         }
-        if (outputasenvvar === true) {
+        console.log("VarName will be=" + varname);
+        if (outputasenvvar) {
+            console.log("Outputting as env var");
             core.exportVariable(varname, value);
             core.setOutput("result", "Environment Variable [" + varname + "] set to value[" + value + "]");
         }
-        if (outputassecret === true) {
-            // console.error("Not implemented");
-            // core.setFailed("Setting secret isn't implemented");
+        if (outputassecret) {
+            console.log("Outputting as a secret");
             const octokit = github.getOctokit(token);
             const { owner, repo } = github.context.repo;
             await (0, github_api_1.createOrUpdateSecretForRepo)(octokit, owner, repo, varname, value);
