@@ -9,7 +9,11 @@ export async function createOrUpdateSecretForRepo(
   secretName: string,
   secretValue: string
 ): Promise<void> {
-  // Get the public key for the repo
+
+    console.log("Owner=" + owner)
+    console.log("Repo=" + repo)
+
+    // Get the public key for the repo
   const { data: publicKey } = await octokit.rest.actions.getRepoPublicKey({
     owner,
     repo,

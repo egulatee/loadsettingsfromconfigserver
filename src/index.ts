@@ -19,15 +19,15 @@ const variabletoset = core.getInput("variabletoset", { required: false });
 
 const outputasenvvarstr  =core.getInput("outputasenvvar", { required: false })
 const outputasenvvar = stringToBoolean(outputasenvvarstr, true)
-console.log("outputasenvvar str=" + outputasenvvarstr + " converted=" + outputasenvvar)
+//console.log("outputasenvvar str=" + outputasenvvarstr + " converted=" + outputasenvvar)
 
 const outputassecretstr =  core.getInput("outputassecret", { required: false })
 const outputassecret = stringToBoolean(outputassecretstr, false)
-console.log("outputassecret str=" + outputassecretstr + " converted=" + outputassecret)
+//console.log("outputassecret str=" + outputassecretstr + " converted=" + outputassecret)
 
 const decodebase64str =   core.getInput("decodebase64", { required: false })
 const decodebase64 = stringToBoolean(decodebase64str, false)
-console.log("decodebase64 str=" + decodebase64str + " converted=" + decodebase64)
+//console.log("decodebase64 str=" + decodebase64str + " converted=" + decodebase64)
 
 main();
 
