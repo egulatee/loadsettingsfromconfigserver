@@ -33407,7 +33407,13 @@ async function processResponse(response) {
 }
 function stringToBoolean(str) {
     console.log("String=" + str);
-    return str.toLowerCase() === "true";
+    if (str.toLowerCase() === "true") {
+        console.log("Returning true");
+        return true;
+    }
+    console.log("Returning false");
+    console.log("String=" + str);
+    return false;
 }
 function isUndefinedEmptyOrNull(str) {
     if (str === undefined || str === null || str === "") {
