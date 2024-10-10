@@ -51,26 +51,22 @@ export async function createOrUpdateVarsForRepo(
       owner,
       repo,
       name: varName,
-    });
+    })
+      // Update repo variable
+    await octokit.rest.actions.updateRepoVariable({
+        owner,
+        repo,
+        name: varName,
+        value: varValue,
+      });
   } catch (error) {
     console.log("Error getting variable: " + error);
-  }
-
-  if (variable === undefined) {
     // Create repo variable
     await octokit.rest.actions.createRepoVariable({
-      owner,
-      repo,
-      name: varName,
-      value: varValue,
-    });
-  } else {
-    // Update repo variable
-    await octokit.rest.actions.updateRepoVariable({
-      owner,
-      repo,
-      name: varName,
-      value: varValue,
-    });
-  }
+        owner,
+        repo,
+        name: varName,
+        value: varValue,
+      });
+    }
 }
