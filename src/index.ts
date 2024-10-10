@@ -121,7 +121,13 @@ async function processResponse(response: Response) {
 
 function stringToBoolean(str: string): boolean {
   console.log("String=" + str)
-  return str.toLowerCase() === "true";
+  if (str.toLowerCase() === "true") {
+    console.log("Returning true")
+    return true
+  }
+  console.log("Returning false")
+  console.log("String=" + str)
+  return false
 }
 
 function isUndefinedEmptyOrNull(str: string): boolean {
