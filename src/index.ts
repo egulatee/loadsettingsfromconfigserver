@@ -22,7 +22,7 @@ const property = core.getInput("propertytoretrieve", { required: true });
 const variabletoset = core.getInput("variabletoset", { required: false });
 
 const outputasenvvarstr = core.getInput("outputasenvvar", { required: false });
-const outputasenvvar = stringToBoolean(outputasenvvarstr, true);
+const outputasenvvar = stringToBoolean(outputasenvvarstr, false);
 //console.log("outputasenvvar str=" + outputasenvvarstr + " converted=" + outputasenvvar)
 
 const outputassecretstr = core.getInput("outputassecret", { required: false });
