@@ -2,9 +2,13 @@ name: 'LoadFromSpringCloudConfigServer'
 description: 'Sets Env and Secrets from a Spring Cloud Config Server'
 
 inputs:
-  USE_AS_TOKEN:
+  USE_AS_TOKEN_FOR_SECRETS:
     description: 'Use as the PAT Token to set secretss'
     required: true
+    type: string
+  TOKEN_FOR_SECRETS:
+    description: 'Token for secrets'
+    optional: true
     type: string
   AUTH_TOKEN_ENDPOINT:
     description: 'Auth Token Endpoint'
@@ -45,10 +49,6 @@ inputs:
     description: 'Output as a env var'
     optional: true
     type: boolean
-  TOKEN_FOR_SECRETS:
-    description: 'Token for secrets'
-    optional: true
-    type: string
   outputassecret:
     description: 'Output as a secret'
     optional: true
