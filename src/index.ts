@@ -23,7 +23,7 @@ console.log("outputasenvvar str=" + outputasenvvarstr + " converted=" + outputas
 
 const outputassecretstr =  core.getInput("outputasecret", { required: false })
 const outputassecret = stringToBoolean(outputassecretstr)
-console.log("outputassecretstr str=" + outputassecretstr + " converted=" + outputassecret)
+console.log("outputassecret str=" + outputassecretstr + " converted=" + outputassecret)
 
 const decodebase64str =   core.getInput("decodebase64", { required: false })
 const decodebase64 = stringToBoolean(decodebase64str)
@@ -98,6 +98,7 @@ async function processResponse(response: Response) {
 
     console.log("VarName will be=" + varname)
 
+    console.log("outputasenvvar=" + outputasenvvar)
     if (outputasenvvar) {
       console.log("Outputting as env var")
 
@@ -107,6 +108,7 @@ async function processResponse(response: Response) {
         "Environment Variable [" + varname + "] set to value[" + value + "]"
       );
     }
+    console.log("outputassecret=" + outputassecret)
     if (outputassecret) {
       console.log("Outputting as a secret")
 
@@ -123,13 +125,13 @@ async function processResponse(response: Response) {
 }
 
 function stringToBoolean(str: string): boolean {
-  console.log("String=" + str)
+//  console.log("String=" + str)
   if (str.toLowerCase() === "true") {
-    console.log("Returning true")
+//    console.log("Returning true")
     return true
   }
-  console.log("Returning false")
-  console.log("String=" + str)
+  // console.log("Returning false")
+  // console.log("String=" + str)
   return false
 }
 
