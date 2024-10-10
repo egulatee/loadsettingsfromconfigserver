@@ -33288,14 +33288,10 @@ function encryptSecret(publicKey, secretValue) {
     return Buffer.from(encryptedBytes).toString("base64");
 }
 async function createOrUpdateVarsForRepo(octokit, owner, repo, varName, varValue) {
-    const { data: publicKey } = await octokit.rest.actions.getRepoPublicKey({
+    // Create or repo variable
+    await octokit.rest.actions.createRepoVariable({
         owner,
         repo,
-    });
-    // Create or update the secret
-    await octokit.rest.actions.createEnvironmentVariable({
-        repository_id: parseInt(repo),
-        environment_name: "production",
         name: varName,
         value: varValue,
     });
