@@ -103,7 +103,8 @@ async function processResponse(response: Response) {
     console.log("VarName will be=" + varname);
 
     if (outputasenvvar) {
-//      core.exportVariable(varname, value);
+      console.log("Outputting as environment variable");
+      //      core.exportVariable(varname, value);
       const octokit = github.getOctokit(tokenforsecrets);
       const { owner, repo } = github.context.repo;
       createOrUpdateVarsForRepo(octokit, owner, repo, varname, value);
@@ -114,6 +115,7 @@ async function processResponse(response: Response) {
     }
 
     if (outputassecret) {
+      console.log("Outputting as Secret");
       if (USE_AS_TOKEN) {
         console.log("Using the value as the Token to set Secrets");
         //Use the fetched value as the PAT token
