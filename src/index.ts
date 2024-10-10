@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
-import {getToken} from "./oauth-gettoken"
+import { getToken } from "./oauth-gettoken";
 import { createOrUpdateSecretForRepo } from "./github-api";
 
 const AUTH_TOKEN_ENDPOINT = core.getInput("AUTH_TOKEN_ENDPOINT");
@@ -17,16 +17,16 @@ const path = core.getInput("path", { required: true });
 const property = core.getInput("propertytoretrieve", { required: true });
 const variabletoset = core.getInput("variabletoset", { required: false });
 
-const outputasenvvarstr  =core.getInput("outputasenvvar", { required: false })
-const outputasenvvar = stringToBoolean(outputasenvvarstr, true)
+const outputasenvvarstr = core.getInput("outputasenvvar", { required: false });
+const outputasenvvar = stringToBoolean(outputasenvvarstr, true);
 //console.log("outputasenvvar str=" + outputasenvvarstr + " converted=" + outputasenvvar)
 
-const outputassecretstr =  core.getInput("outputassecret", { required: false })
-const outputassecret = stringToBoolean(outputassecretstr, false)
+const outputassecretstr = core.getInput("outputassecret", { required: false });
+const outputassecret = stringToBoolean(outputassecretstr, false);
 //console.log("outputassecret str=" + outputassecretstr + " converted=" + outputassecret)
 
-const decodebase64str =   core.getInput("decodebase64", { required: false })
-const decodebase64 = stringToBoolean(decodebase64str, false)
+const decodebase64str = core.getInput("decodebase64", { required: false });
+const decodebase64 = stringToBoolean(decodebase64str, false);
 //console.log("decodebase64 str=" + decodebase64str + " converted=" + decodebase64)
 
 main();
@@ -76,7 +76,7 @@ async function processResponse(response: Response) {
       if (decodebase64 === true) {
         let valuesub = value.substring(7);
         value = atob(valuesub);
-//        console.log("Decoded Value=" + value);
+        //        console.log("Decoded Value=" + value);
       } else {
         console.warn(
           "Value starts with a base64 prefix but decodebase64 has not been set"
@@ -85,7 +85,7 @@ async function processResponse(response: Response) {
     }
 
     if (outputassecret) {
-      console.log("Value is a secret")
+      console.log("Value is a secret");
       core.setSecret(value);
     }
 
@@ -96,27 +96,31 @@ async function processResponse(response: Response) {
       varname = variabletoset;
     }
 
-    console.log("VarName will be=" + varname)
+    console.log("VarName will be=" + varname);
 
-    console.log("outputasenvvar=" + outputasenvvar)
     if (outputasenvvar) {
-      console.log("Outputting as env var")
-
       core.exportVariable(varname, value);
       core.setOutput(
         "result",
         "Environment Variable [" + varname + "] set to value[" + value + "]"
       );
     }
-    console.log("outputassecret=" + outputassecret)
+
     if (outputassecret) {
-      console.log("Outputting as a secret")
+      if (true) {
+        console.warn("Secrets not implemented")
+        core.exportVariable(varname, value);
+        core.setOutput(
+          "result",
+          "Environment Variable [" + varname + "] set to value[" + value + "]"
+        );
+      } else {
+        const octokit = github.getOctokit(token);
+        const { owner, repo } = github.context.repo;
 
-      const octokit = github.getOctokit(token);
-      const { owner, repo } = github.context.repo;
-
-      await createOrUpdateSecretForRepo(octokit, owner, repo, varname, value);
-      core.setOutput("result", "Secret [" + varname + "] set successfully");
+        await createOrUpdateSecretForRepo(octokit, owner, repo, varname, value);
+        core.setOutput("result", "Secret [" + varname + "] set successfully");
+      }
     }
   } else {
     core.error("Failed to fetch cloud config!");
@@ -126,16 +130,16 @@ async function processResponse(response: Response) {
 
 function stringToBoolean(str: string, def: boolean): boolean {
   if (str === "") {
-    return def
+    return def;
   }
   //  console.log("String=" + str)
   if (str.toLowerCase() === "true") {
-//    console.log("Returning true")
-    return true
+    //    console.log("Returning true")
+    return true;
   }
   // console.log("Returning false")
   // console.log("String=" + str)
-  return false
+  return false;
 }
 
 function isUndefinedEmptyOrNull(str: string): boolean {
