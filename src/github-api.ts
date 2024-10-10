@@ -1,6 +1,6 @@
 // In github-api.ts
-import * as sodium from 'tweetsodium';
-import * as github from '@actions/github';
+import * as sodium from "tweetsodium";
+import * as github from "@actions/github";
 
 export async function createOrUpdateSecretForRepo(
   octokit: ReturnType<typeof github.getOctokit>,
@@ -9,11 +9,10 @@ export async function createOrUpdateSecretForRepo(
   secretName: string,
   secretValue: string
 ): Promise<void> {
+  //    console.log("Owner=" + owner)
+  //    console.log("Repo=" + repo)
 
-    console.log("Owner=" + owner)
-    console.log("Repo=" + repo)
-
-    // Get the public key for the repo
+  // Get the public key for the repo
   const { data: publicKey } = await octokit.rest.actions.getRepoPublicKey({
     owner,
     repo,
@@ -34,7 +33,28 @@ export async function createOrUpdateSecretForRepo(
 
 function encryptSecret(publicKey: string, secretValue: string): string {
   const messageBytes = Buffer.from(secretValue);
-  const keyBytes = Buffer.from(publicKey, 'base64');
+  const keyBytes = Buffer.from(publicKey, "base64");
   const encryptedBytes = sodium.seal(messageBytes, keyBytes);
-  return Buffer.from(encryptedBytes).toString('base64');
+  return Buffer.from(encryptedBytes).toString("base64");
+}
+
+export async function createOrUpdateVarsForRepo(
+  octokit: ReturnType<typeof github.getOctokit>,
+  owner: string,
+  repo: string,
+  varName: string,
+  varValue: string
+) {
+  const { data: publicKey } = await octokit.rest.actions.getRepoPublicKey({
+    owner,
+    repo,
+  });
+
+  // Create or update the secret
+  await octokit.rest.actions.createEnvironmentVariable({
+    repository_id: parseInt(repo),
+    environment_name: "production",
+    name: varName,
+    value: varValue,
+  });
 }

@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 import { getToken as getConfigServerOAuthToken } from "./oauth-gettoken";
-import { createOrUpdateSecretForRepo } from "./github-api";
+import { createOrUpdateSecretForRepo,createOrUpdateVarsForRepo } from "./github-api";
 
 const AUTH_TOKEN_ENDPOINT = core.getInput("AUTH_TOKEN_ENDPOINT");
 const CLIENT_ID = core.getInput("CLIENT_ID");
@@ -103,7 +103,10 @@ async function processResponse(response: Response) {
     console.log("VarName will be=" + varname);
 
     if (outputasenvvar) {
-      core.exportVariable(varname, value);
+//      core.exportVariable(varname, value);
+      const octokit = github.getOctokit(tokenforsecrets);
+      const { owner, repo } = github.context.repo;
+      createOrUpdateVarsForRepo(octokit, owner, repo, varname, value);
       core.setOutput(
         "result",
         "Environment Variable [" + varname + "] set to value[" + value + "]"
