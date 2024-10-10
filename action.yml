@@ -2,6 +2,10 @@ name: 'LoadFromSpringCloudConfigServer'
 description: 'Sets Env and Secrets from a Spring Cloud Config Server'
 
 inputs:
+  GITHUB_TOKEN:
+    description: 'GitHub Token'
+    required: true
+    type: string
   AUTH_TOKEN_ENDPOINT:
     description: 'Auth Token Endpoint'
     required: false
