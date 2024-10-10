@@ -45,16 +45,12 @@ export async function createOrUpdateVarsForRepo(
   varName: string,
   varValue: string
 ) {
-  const { data: publicKey } = await octokit.rest.actions.getRepoPublicKey({
+    
+  // Create or repo variable
+  await octokit.rest.actions.createRepoVariable({
     owner,
     repo,
-  });
-
-  // Create or update the secret
-  await octokit.rest.actions.createEnvironmentVariable({
-    repository_id: parseInt(repo),
-    environment_name: "production",
     name: varName,
-    value: varValue,
+    value: varValue,    
   });
 }
