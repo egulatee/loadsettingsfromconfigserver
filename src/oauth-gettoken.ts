@@ -7,7 +7,7 @@ interface TokenResponse {
     scope: string;
   }
   
-  async function getToken(endpoint: string, clientid: string, clientsecret: string): Promise<string> {
+  export async function getToken(endpoint: string, clientid: string, clientsecret: string): Promise<string> {
     const tokenEndpoint = `${endpoint}`;
   
     console.log("Fetching token from " + endpoint);

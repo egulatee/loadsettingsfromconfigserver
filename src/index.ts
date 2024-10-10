@@ -1,5 +1,7 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
+import {getToken} from "./oauth-gettoken"
+import { createOrUpdateSecretForRepo } from "./github-api";
 
 const AUTH_TOKEN_ENDPOINT = core.getInput("AUTH_TOKEN_ENDPOINT");
 const CLIENT_ID = core.getInput("CLIENT_ID");
@@ -23,8 +25,6 @@ const outputassecret = stringToBoolean(
 const decodebase64 = stringToBoolean(
   core.getInput("decodebase64", { required: false })
 );
-
-import { createOrUpdateSecretForRepo } from "./github-api";
 
 main();
 
