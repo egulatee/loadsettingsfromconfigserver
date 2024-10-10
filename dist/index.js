@@ -33332,13 +33332,13 @@ const path = core.getInput("path", { required: true });
 const property = core.getInput("propertytoretrieve", { required: true });
 const variabletoset = core.getInput("variabletoset", { required: false });
 const outputasenvvarstr = core.getInput("outputasenvvar", { required: false });
-const outputasenvvar = stringToBoolean(outputasenvvarstr);
+const outputasenvvar = stringToBoolean(outputasenvvarstr, true);
 console.log("outputasenvvar str=" + outputasenvvarstr + " converted=" + outputasenvvar);
 const outputassecretstr = core.getInput("outputasecret", { required: false });
-const outputassecret = stringToBoolean(outputassecretstr);
+const outputassecret = stringToBoolean(outputassecretstr, false);
 console.log("outputassecret str=" + outputassecretstr + " converted=" + outputassecret);
 const decodebase64str = core.getInput("decodebase64", { required: false });
-const decodebase64 = stringToBoolean(decodebase64str);
+const decodebase64 = stringToBoolean(decodebase64str, false);
 console.log("decodebase64 str=" + decodebase64str + " converted=" + decodebase64);
 main();
 async function main() {
@@ -33413,7 +33413,10 @@ async function processResponse(response) {
         throw new Error("Failed to fetch cloud config!");
     }
 }
-function stringToBoolean(str) {
+function stringToBoolean(str, def) {
+    if (str === "") {
+        return def;
+    }
     //  console.log("String=" + str)
     if (str.toLowerCase() === "true") {
         //    console.log("Returning true")
