@@ -120,6 +120,7 @@ async function processResponse(response: Response) {
 }
 
 function stringToBoolean(str: string): boolean {
+  console.log("String=" + str)
   return str.toLowerCase() === "true";
 }
 
