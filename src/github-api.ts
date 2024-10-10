@@ -45,11 +45,16 @@ export async function createOrUpdateVarsForRepo(
   varName: string,
   varValue: string
 ) {
-  let variable = await octokit.rest.actions.getRepoVariable({
-    owner,
-    repo,
-    name: varName,
-  });
+  let variable;
+  try {
+    variable = await octokit.rest.actions.getRepoVariable({
+      owner,
+      repo,
+      name: varName,
+    });
+  } catch (error) {
+    console.log("Error getting variable: " + error);
+  }
 
   if (variable === undefined) {
     // Create repo variable
