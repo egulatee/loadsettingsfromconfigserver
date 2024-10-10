@@ -33354,7 +33354,7 @@ const CLIENT_ID = core.getInput("CLIENT_ID");
 const CLIENT_SECRET = core.getInput("CLIENT_SECRET");
 const USE_AS_TOKEN = stringToBoolean(core.getInput("USE_AS_TOKEN_FOR_SECRETS"), false);
 const tokenforsecrets = core.getInput("TOKEN_FOR_SECRETS", { required: false });
-const baseurl = core.getInput("cloud_config_server_base_url", {
+const baseurl = core.getInput("config_server_base_url", {
     required: true,
 });
 const path = core.getInput("path", { required: true });

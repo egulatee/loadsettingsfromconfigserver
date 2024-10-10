@@ -23,7 +23,7 @@ inputs:
     required: false
     type: string
 
-  cloud_config_server_base_url:
+  config_server_base_url:
     description: 'Base URL of cloud config server'
     required: true
     type: string

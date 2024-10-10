@@ -13,7 +13,7 @@ const USE_AS_TOKEN = stringToBoolean(
 
 const tokenforsecrets = core.getInput("TOKEN_FOR_SECRETS", { required: false });
 
-const baseurl = core.getInput("cloud_config_server_base_url", {
+const baseurl = core.getInput("config_server_base_url", {
   required: true,
 });
 const path = core.getInput("path", { required: true });
