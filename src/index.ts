@@ -5,7 +5,7 @@ import { createOrUpdateSecretForRepo,createOrUpdateVarsForRepo } from "./github-
 
 const config_server_oauth_token_endpoint = core.getInput("config_server_oauth_token_endpoint");
 const config_server_oauth_client_id = core.getInput("config_server_oauth_client_id");
-const CLIENT_SECRET = core.getInput("CLIENT_SECRET");
+const config_server_oauth_client_secret = core.getInput("config_server_oauth_client_secret");
 const USE_AS_TOKEN = stringToBoolean(
   core.getInput("USE_AS_TOKEN_FOR_SECRETS"),
   false
@@ -39,7 +39,7 @@ async function main() {
   let accessToken = await getConfigServerOAuthToken(
     config_server_oauth_token_endpoint,
     config_server_oauth_client_id,
-    CLIENT_SECRET
+    config_server_oauth_client_secret
   );
   //  console.log("Access Token=" + accessToken)
   connectToConfigServer(baseurl, path, accessToken);

@@ -18,7 +18,7 @@ inputs:
     description: 'OAuth2 ClientId'
     required: false
     type: string
-  CLIENT_SECRET:
+  config_server_oauth_client_secret:
     description: 'OAuth2 Secret'
     required: false
     type: string
