@@ -33331,9 +33331,15 @@ const baseurl = core.getInput("cloud_config_server_base_url", {
 const path = core.getInput("path", { required: true });
 const property = core.getInput("propertytoretrieve", { required: true });
 const variabletoset = core.getInput("variabletoset", { required: false });
-const outputasenvvar = stringToBoolean(core.getInput("outputasenvvar", { required: false }));
-const outputassecret = stringToBoolean(core.getInput("outputasecret", { required: false }));
-const decodebase64 = stringToBoolean(core.getInput("decodebase64", { required: false }));
+const outputasenvvarstr = core.getInput("outputasenvvar", { required: false });
+const outputasenvvar = stringToBoolean(outputasenvvarstr);
+console.log("outputasenvvar str=" + outputasenvvarstr + " converted=" + outputasenvvar);
+const outputassecretstr = core.getInput("outputasecret", { required: false });
+const outputassecret = stringToBoolean(outputassecretstr);
+console.log("outputassecretstr str=" + outputassecretstr + " converted=" + outputassecret);
+const decodebase64str = core.getInput("decodebase64", { required: false });
+const decodebase64 = stringToBoolean(decodebase64str);
+console.log("decodebase64 str=" + decodebase64str + " converted=" + decodebase64);
 main();
 async function main() {
     let accessToken = await (0, oauth_gettoken_1.getToken)(AUTH_TOKEN_ENDPOINT, CLIENT_ID, CLIENT_SECRET);
