@@ -33295,22 +33295,18 @@ async function createOrUpdateVarsForRepo(octokit, owner, repo, varName, varValue
             repo,
             name: varName,
         });
-    }
-    catch (error) {
-        console.log("Error getting variable: " + error);
-    }
-    if (variable === undefined) {
-        // Create repo variable
-        await octokit.rest.actions.createRepoVariable({
+        // Update repo variable
+        await octokit.rest.actions.updateRepoVariable({
             owner,
             repo,
             name: varName,
             value: varValue,
         });
     }
-    else {
-        // Update repo variable
-        await octokit.rest.actions.updateRepoVariable({
+    catch (error) {
+        console.log("Error getting variable: " + error);
+        // Create repo variable
+        await octokit.rest.actions.createRepoVariable({
             owner,
             repo,
             name: varName,
