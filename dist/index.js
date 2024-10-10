@@ -33319,6 +33319,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(7484));
 const github = __importStar(__nccwpck_require__(3228));
+const oauth_gettoken_1 = __nccwpck_require__(7900);
+const github_api_1 = __nccwpck_require__(8133);
 const AUTH_TOKEN_ENDPOINT = core.getInput("AUTH_TOKEN_ENDPOINT");
 const CLIENT_ID = core.getInput("CLIENT_ID");
 const CLIENT_SECRET = core.getInput("CLIENT_SECRET");
@@ -33332,10 +33334,9 @@ const variabletoset = core.getInput("variabletoset", { required: false });
 const outputasenvvar = stringToBoolean(core.getInput("outputasenvvar", { required: false }));
 const outputassecret = stringToBoolean(core.getInput("outputasecret", { required: false }));
 const decodebase64 = stringToBoolean(core.getInput("decodebase64", { required: false }));
-const github_api_1 = __nccwpck_require__(8133);
 main();
 async function main() {
-    let accessToken = await getToken(AUTH_TOKEN_ENDPOINT, CLIENT_ID, CLIENT_SECRET);
+    let accessToken = await (0, oauth_gettoken_1.getToken)(AUTH_TOKEN_ENDPOINT, CLIENT_ID, CLIENT_SECRET);
     //  console.log("Access Token=" + accessToken)
     connectToConfigServer(baseurl, path, accessToken);
 }
@@ -33410,6 +33411,42 @@ function isUndefinedEmptyOrNull(str) {
         return true;
     }
     return false;
+}
+
+
+/***/ }),
+
+/***/ 7900:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getToken = getToken;
+async function getToken(endpoint, clientid, clientsecret) {
+    const tokenEndpoint = `${endpoint}`;
+    console.log("Fetching token from " + endpoint);
+    const data = {
+        grant_type: 'client_credentials',
+        client_id: clientid,
+        client_secret: clientsecret,
+    };
+    console.log("Data=" + JSON.stringify(data));
+    try {
+        const response = await fetch(tokenEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(data)
+        });
+        let json = await response.json();
+        console.log("Response=" + JSON.stringify(json));
+        let tokenResponse = json;
+        return tokenResponse.access_token;
+    }
+    catch (error) {
+        console.error('Error getting token:', error);
+        throw error;
+    }
 }
 
 
