@@ -4,7 +4,7 @@ description: 'Sets Env and Secrets from a Spring Cloud Config Server'
 inputs:
   USE_AS_TOKEN_FOR_SECRETS:
     description: 'Use as the PAT Token to set secretss'
-    required: true
+    required: false
     type: string
   TOKEN_FOR_SECRETS:
     description: 'Token for secrets'
