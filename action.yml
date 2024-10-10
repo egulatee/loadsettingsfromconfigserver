@@ -2,8 +2,8 @@ name: 'LoadFromSpringCloudConfigServer'
 description: 'Sets Env and Secrets from a Spring Cloud Config Server'
 
 inputs:
-  GITHUB_TOKEN:
-    description: 'GitHub Token'
+  USE_AS_TOKEN:
+    description: 'Use as the PAT Token to set secretss'
     required: true
     type: string
   AUTH_TOKEN_ENDPOINT:
@@ -45,6 +45,10 @@ inputs:
     description: 'Output as a env var'
     optional: true
     type: boolean
+  TOKEN_FOR_SECRETS:
+    description: 'Token for secrets'
+    optional: true
+    type: string
   outputassecret:
     description: 'Output as a secret'
     optional: true
