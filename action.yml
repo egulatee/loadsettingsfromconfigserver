@@ -6,7 +6,7 @@ inputs:
     description: 'Use as the PAT Token to set secretss'
     required: false
     type: string
-  TOKEN_FOR_SECRETS:
+  token_for_github_octokit:
     description: 'Token for secrets'
     optional: true
     type: string

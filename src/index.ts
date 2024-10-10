@@ -11,7 +11,7 @@ const USE_AS_TOKEN = stringToBoolean(
   false
 );
 
-const tokenforsecrets = core.getInput("TOKEN_FOR_SECRETS", { required: false });
+const tokenforsecrets = core.getInput("token_for_github_octokit", { required: false });
 
 const baseurl = core.getInput("config_server_base_url", {
   required: true,
