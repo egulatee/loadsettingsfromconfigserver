@@ -45,17 +45,14 @@ inputs:
     description: 'Output as a env var'
     optional: true
     type: boolean
-    default: 'true'
   outputassecret:
     description: 'Output as a secret'
     optional: true
     type: boolean
-    default: 'false'
   decodebase64:
     description: 'If a value starts with base64: convert it'
     required: false
     type: boolean
-    default: 'false'
 
 
 runs:
