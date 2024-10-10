@@ -6,7 +6,7 @@ import { createOrUpdateSecretForRepo,createOrUpdateVarsForRepo } from "./github-
 const config_server_oauth_token_endpoint = core.getInput("config_server_oauth_token_endpoint");
 const config_server_oauth_client_id = core.getInput("config_server_oauth_client_id");
 const config_server_oauth_client_secret = core.getInput("config_server_oauth_client_secret");
-const USE_AS_TOKEN = stringToBoolean(
+const use_as_token_for_github_octokit = stringToBoolean(
   core.getInput("use_as_token_for_github_octokit"),
   false
 );
@@ -116,7 +116,7 @@ async function processResponse(response: Response) {
 
     if (outputassecret) {
       console.log("Outputting as Secret");
-      if (USE_AS_TOKEN) {
+      if (use_as_token_for_github_octokit) {
         console.log("Using the value as the Token to set Secrets");
         //Use the fetched value as the PAT token
         const octokit = github.getOctokit(value);
