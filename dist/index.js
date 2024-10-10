@@ -33259,11 +33259,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createOrUpdateSecretForRepo = createOrUpdateSecretForRepo;
+exports.createOrUpdateVarsForRepo = createOrUpdateVarsForRepo;
 // In github-api.ts
 const sodium = __importStar(__nccwpck_require__(4303));
 async function createOrUpdateSecretForRepo(octokit, owner, repo, secretName, secretValue) {
-    console.log("Owner=" + owner);
-    console.log("Repo=" + repo);
+    //    console.log("Owner=" + owner)
+    //    console.log("Repo=" + repo)
     // Get the public key for the repo
     const { data: publicKey } = await octokit.rest.actions.getRepoPublicKey({
         owner,
@@ -33282,9 +33283,22 @@ async function createOrUpdateSecretForRepo(octokit, owner, repo, secretName, sec
 }
 function encryptSecret(publicKey, secretValue) {
     const messageBytes = Buffer.from(secretValue);
-    const keyBytes = Buffer.from(publicKey, 'base64');
+    const keyBytes = Buffer.from(publicKey, "base64");
     const encryptedBytes = sodium.seal(messageBytes, keyBytes);
-    return Buffer.from(encryptedBytes).toString('base64');
+    return Buffer.from(encryptedBytes).toString("base64");
+}
+async function createOrUpdateVarsForRepo(octokit, owner, repo, varName, varValue) {
+    const { data: publicKey } = await octokit.rest.actions.getRepoPublicKey({
+        owner,
+        repo,
+    });
+    // Create or update the secret
+    await octokit.rest.actions.createEnvironmentVariable({
+        repository_id: parseInt(repo),
+        environment_name: "production",
+        name: varName,
+        value: varValue,
+    });
 }
 
 
@@ -33397,7 +33411,10 @@ async function processResponse(response) {
         }
         console.log("VarName will be=" + varname);
         if (outputasenvvar) {
-            core.exportVariable(varname, value);
+            //      core.exportVariable(varname, value);
+            const octokit = github.getOctokit(tokenforsecrets);
+            const { owner, repo } = github.context.repo;
+            (0, github_api_1.createOrUpdateVarsForRepo)(octokit, owner, repo, varname, value);
             core.setOutput("result", "Environment Variable [" + varname + "] set to value[" + value + "]");
         }
         if (outputassecret) {
