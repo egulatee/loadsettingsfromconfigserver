@@ -33393,12 +33393,12 @@ async function processResponse(response) {
             varname = variabletoset;
         }
         console.log("VarName will be=" + varname);
-        if (outputasenvvar === true) {
+        if (outputasenvvar) {
             console.log("Outputting as env var");
             core.exportVariable(varname, value);
             core.setOutput("result", "Environment Variable [" + varname + "] set to value[" + value + "]");
         }
-        if (outputassecret === true) {
+        if (outputassecret) {
             console.log("Outputting as a secret");
             const octokit = github.getOctokit(token);
             const { owner, repo } = github.context.repo;
