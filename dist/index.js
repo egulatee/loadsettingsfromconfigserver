@@ -33336,7 +33336,7 @@ const outputasenvvar = stringToBoolean(outputasenvvarstr);
 console.log("outputasenvvar str=" + outputasenvvarstr + " converted=" + outputasenvvar);
 const outputassecretstr = core.getInput("outputasecret", { required: false });
 const outputassecret = stringToBoolean(outputassecretstr);
-console.log("outputassecretstr str=" + outputassecretstr + " converted=" + outputassecret);
+console.log("outputassecret str=" + outputassecretstr + " converted=" + outputassecret);
 const decodebase64str = core.getInput("decodebase64", { required: false });
 const decodebase64 = stringToBoolean(decodebase64str);
 console.log("decodebase64 str=" + decodebase64str + " converted=" + decodebase64);
@@ -33393,11 +33393,13 @@ async function processResponse(response) {
             varname = variabletoset;
         }
         console.log("VarName will be=" + varname);
+        console.log("outputasenvvar=" + outputasenvvar);
         if (outputasenvvar) {
             console.log("Outputting as env var");
             core.exportVariable(varname, value);
             core.setOutput("result", "Environment Variable [" + varname + "] set to value[" + value + "]");
         }
+        console.log("outputassecret=" + outputassecret);
         if (outputassecret) {
             console.log("Outputting as a secret");
             const octokit = github.getOctokit(token);
@@ -33412,13 +33414,13 @@ async function processResponse(response) {
     }
 }
 function stringToBoolean(str) {
-    console.log("String=" + str);
+    //  console.log("String=" + str)
     if (str.toLowerCase() === "true") {
-        console.log("Returning true");
+        //    console.log("Returning true")
         return true;
     }
-    console.log("Returning false");
-    console.log("String=" + str);
+    // console.log("Returning false")
+    // console.log("String=" + str)
     return false;
 }
 function isUndefinedEmptyOrNull(str) {
