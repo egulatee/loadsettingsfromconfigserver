@@ -33352,7 +33352,7 @@ const github_api_1 = __nccwpck_require__(8133);
 const config_server_oauth_token_endpoint = core.getInput("config_server_oauth_token_endpoint");
 const config_server_oauth_client_id = core.getInput("config_server_oauth_client_id");
 const config_server_oauth_client_secret = core.getInput("config_server_oauth_client_secret");
-const USE_AS_TOKEN = stringToBoolean(core.getInput("use_as_token_for_github_octokit"), false);
+const use_as_token_for_github_octokit = stringToBoolean(core.getInput("use_as_token_for_github_octokit"), false);
 const tokenforsecrets = core.getInput("token_for_github_octokit", { required: false });
 const baseurl = core.getInput("config_server_base_url", {
     required: true,
@@ -33432,7 +33432,7 @@ async function processResponse(response) {
         }
         if (outputassecret) {
             console.log("Outputting as Secret");
-            if (USE_AS_TOKEN) {
+            if (use_as_token_for_github_octokit) {
                 console.log("Using the value as the Token to set Secrets");
                 //Use the fetched value as the PAT token
                 const octokit = github.getOctokit(value);
