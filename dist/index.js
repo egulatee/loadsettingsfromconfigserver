@@ -33349,7 +33349,7 @@ const core = __importStar(__nccwpck_require__(7484));
 const github = __importStar(__nccwpck_require__(3228));
 const oauth_gettoken_1 = __nccwpck_require__(7900);
 const github_api_1 = __nccwpck_require__(8133);
-const AUTH_TOKEN_ENDPOINT = core.getInput("AUTH_TOKEN_ENDPOINT");
+const config_server_oauth_token_endpoint = core.getInput("config_server_oauth_token_endpoint");
 const CLIENT_ID = core.getInput("CLIENT_ID");
 const CLIENT_SECRET = core.getInput("CLIENT_SECRET");
 const USE_AS_TOKEN = stringToBoolean(core.getInput("USE_AS_TOKEN_FOR_SECRETS"), false);
@@ -33371,7 +33371,7 @@ const decodebase64 = stringToBoolean(decodebase64str, false);
 //console.log("decodebase64 str=" + decodebase64str + " converted=" + decodebase64)
 main();
 async function main() {
-    let accessToken = await (0, oauth_gettoken_1.getToken)(AUTH_TOKEN_ENDPOINT, CLIENT_ID, CLIENT_SECRET);
+    let accessToken = await (0, oauth_gettoken_1.getToken)(config_server_oauth_token_endpoint, CLIENT_ID, CLIENT_SECRET);
     //  console.log("Access Token=" + accessToken)
     connectToConfigServer(baseurl, path, accessToken);
 }

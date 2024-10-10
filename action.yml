@@ -10,7 +10,7 @@ inputs:
     description: 'Token for secrets'
     optional: true
     type: string
-  AUTH_TOKEN_ENDPOINT:
+  config_server_oauth_token_endpoint:
     description: 'Auth Token Endpoint'
     required: false
     type: string

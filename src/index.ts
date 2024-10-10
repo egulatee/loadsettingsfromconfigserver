@@ -3,7 +3,7 @@ import * as github from "@actions/github";
 import { getToken as getConfigServerOAuthToken } from "./oauth-gettoken";
 import { createOrUpdateSecretForRepo,createOrUpdateVarsForRepo } from "./github-api";
 
-const AUTH_TOKEN_ENDPOINT = core.getInput("AUTH_TOKEN_ENDPOINT");
+const config_server_oauth_token_endpoint = core.getInput("config_server_oauth_token_endpoint");
 const CLIENT_ID = core.getInput("CLIENT_ID");
 const CLIENT_SECRET = core.getInput("CLIENT_SECRET");
 const USE_AS_TOKEN = stringToBoolean(
@@ -37,7 +37,7 @@ main();
 
 async function main() {
   let accessToken = await getConfigServerOAuthToken(
-    AUTH_TOKEN_ENDPOINT,
+    config_server_oauth_token_endpoint,
     CLIENT_ID,
     CLIENT_SECRET
   );
