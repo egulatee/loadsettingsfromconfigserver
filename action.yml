@@ -2,7 +2,7 @@ name: 'LoadFromSpringCloudConfigServer'
 description: 'Sets Env and Secrets from a Spring Cloud Config Server'
 
 inputs:
-  USE_AS_TOKEN_FOR_SECRETS:
+  use_as_token_for_github_octokit:
     description: 'Use as the PAT Token to set secretss'
     required: false
     type: string

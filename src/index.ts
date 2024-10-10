@@ -7,7 +7,7 @@ const config_server_oauth_token_endpoint = core.getInput("config_server_oauth_to
 const config_server_oauth_client_id = core.getInput("config_server_oauth_client_id");
 const config_server_oauth_client_secret = core.getInput("config_server_oauth_client_secret");
 const USE_AS_TOKEN = stringToBoolean(
-  core.getInput("USE_AS_TOKEN_FOR_SECRETS"),
+  core.getInput("use_as_token_for_github_octokit"),
   false
 );
 
