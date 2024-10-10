@@ -33334,7 +33334,7 @@ const variabletoset = core.getInput("variabletoset", { required: false });
 const outputasenvvarstr = core.getInput("outputasenvvar", { required: false });
 const outputasenvvar = stringToBoolean(outputasenvvarstr, true);
 console.log("outputasenvvar str=" + outputasenvvarstr + " converted=" + outputasenvvar);
-const outputassecretstr = core.getInput("outputasecret", { required: false });
+const outputassecretstr = core.getInput("outputassecret", { required: false });
 const outputassecret = stringToBoolean(outputassecretstr, false);
 console.log("outputassecret str=" + outputassecretstr + " converted=" + outputassecret);
 const decodebase64str = core.getInput("decodebase64", { required: false });
