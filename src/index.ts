@@ -11,7 +11,7 @@ const path = core.getInput("path");
 const property = core.getInput("propertytoretrieve");
 const variabletoset = core.getInput("variabletoset");
 
-const maskassecret = stringToBoolean(core.getInput("maskassecret"));
+//const maskassecret = stringToBoolean(core.getInput("maskassecret"));
 const outputasenvvar = stringToBoolean(core.getInput("outputasenvvar"));
 const outputassecret = stringToBoolean(core.getInput("outputasecret"));
 const decodebase64 = stringToBoolean(core.getInput("decodebase64"));
@@ -65,7 +65,7 @@ async function processResponse(response: Response) {
       }
     }
 
-    if (maskassecret === true) {
+    if (outputassecret === true) {
       core.setSecret(value);
     }
 
