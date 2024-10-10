@@ -119,6 +119,7 @@ async function processResponse(response: Response) {
         await createOrUpdateSecretForRepo(octokit, owner, repo, varname, value);
         core.setOutput("result", "Secret [" + varname + "] set successfully");
       } else if (!isUndefinedEmptyOrNull(tokenforsecrets)) {
+        console.log("Setting secret [" + varname + "]");
         const octokit = github.getOctokit(tokenforsecrets);
         const { owner, repo } = github.context.repo;
 
