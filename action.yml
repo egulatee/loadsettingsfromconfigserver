@@ -14,7 +14,7 @@ inputs:
     description: 'Auth Token Endpoint'
     required: false
     type: string
-  CLIENT_ID:
+  config_server_oauth_client_id:
     description: 'OAuth2 ClientId'
     required: false
     type: string

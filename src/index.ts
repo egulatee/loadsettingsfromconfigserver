@@ -4,7 +4,7 @@ import { getToken as getConfigServerOAuthToken } from "./oauth-gettoken";
 import { createOrUpdateSecretForRepo,createOrUpdateVarsForRepo } from "./github-api";
 
 const config_server_oauth_token_endpoint = core.getInput("config_server_oauth_token_endpoint");
-const CLIENT_ID = core.getInput("CLIENT_ID");
+const config_server_oauth_client_id = core.getInput("config_server_oauth_client_id");
 const CLIENT_SECRET = core.getInput("CLIENT_SECRET");
 const USE_AS_TOKEN = stringToBoolean(
   core.getInput("USE_AS_TOKEN_FOR_SECRETS"),
@@ -38,7 +38,7 @@ main();
 async function main() {
   let accessToken = await getConfigServerOAuthToken(
     config_server_oauth_token_endpoint,
-    CLIENT_ID,
+    config_server_oauth_client_id,
     CLIENT_SECRET
   );
   //  console.log("Access Token=" + accessToken)
