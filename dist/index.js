@@ -33326,8 +33326,8 @@ const github_api_1 = __nccwpck_require__(8133);
 const AUTH_TOKEN_ENDPOINT = core.getInput("AUTH_TOKEN_ENDPOINT");
 const CLIENT_ID = core.getInput("CLIENT_ID");
 const CLIENT_SECRET = core.getInput("CLIENT_SECRET");
-const USE_AS_TOKEN = stringToBoolean(core.getInput("USE_AS_TOKEN"), false);
-const tokeforsecrets = core.getInput("TOKEN_FOR_SECRETS", { required: false });
+const USE_AS_TOKEN = stringToBoolean(core.getInput("USE_AS_TOKEN_FOR_SECRETS"), false);
+const tokenforsecrets = core.getInput("TOKEN_FOR_SECRETS", { required: false });
 const baseurl = core.getInput("cloud_config_server_base_url", {
     required: true,
 });
@@ -33409,19 +33409,12 @@ async function processResponse(response) {
                 await (0, github_api_1.createOrUpdateSecretForRepo)(octokit, owner, repo, varname, value);
                 core.setOutput("result", "Secret [" + varname + "] set successfully");
             }
-            // if (true) {
-            //   console.warn("Secrets not implemented")
-            //   core.exportVariable(varname, value);
-            //   core.setOutput(
-            //     "result",
-            //     "Environment Variable [" + varname + "] set to value[" + value + "]"
-            //   );
-            // } else {
-            const octokit = github.getOctokit(tokeforsecrets);
-            const { owner, repo } = github.context.repo;
-            await (0, github_api_1.createOrUpdateSecretForRepo)(octokit, owner, repo, varname, value);
-            core.setOutput("result", "Secret [" + varname + "] set successfully");
-            // }
+            else if (!isUndefinedEmptyOrNull(tokenforsecrets)) {
+                const octokit = github.getOctokit(tokenforsecrets);
+                const { owner, repo } = github.context.repo;
+                await (0, github_api_1.createOrUpdateSecretForRepo)(octokit, owner, repo, varname, value);
+                core.setOutput("result", "Secret [" + varname + "] set successfully");
+            }
         }
     }
     else {
