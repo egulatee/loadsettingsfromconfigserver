@@ -16,7 +16,7 @@ interface TokenResponse {
       client_id: clientid,
       client_secret: clientsecret,
     };
-    console.log("Data=" + JSON.stringify(data));
+//    console.log("Data=" + JSON.stringify(data));
   
     try {
       const response = await fetch(tokenEndpoint,
@@ -26,7 +26,7 @@ interface TokenResponse {
           body: new URLSearchParams(data)
         })
         let json = await response.json();
-        console.log("Response=" + JSON.stringify(json));
+//        console.log("Response=" + JSON.stringify(json));
         let tokenResponse = json as TokenResponse
         return tokenResponse.access_token;
     } catch (error) {
