@@ -104,14 +104,23 @@ async function processResponse(response: Response) {
 
     if (outputasenvvar) {
       console.log("Outputting as environment variable");
-      //      core.exportVariable(varname, value);
-      const octokit = github.getOctokit(tokenforsecrets);
-      const { owner, repo } = github.context.repo;
-      createOrUpdateVarsForRepo(octokit, owner, repo, varname, value);
-      core.setOutput(
-        "result",
-        "Environment Variable [" + varname + "] set to value[" + value + "]"
-      );
+      if (use_as_token_for_github_octokit) {
+        const octokit = github.getOctokit(value);
+        const { owner, repo } = github.context.repo;
+        createOrUpdateVarsForRepo(octokit, owner, repo, varname, value);
+        core.setOutput(
+          "result",
+          "Environment Variable [" + varname + "] set to value[" + value + "]"
+        );
+      } else {
+        const octokit = github.getOctokit(tokenforsecrets);
+        const { owner, repo } = github.context.repo;
+        createOrUpdateVarsForRepo(octokit, owner, repo, varname, value);
+        core.setOutput(
+          "result",
+          "Environment Variable [" + varname + "] set to value[" + value + "]"
+        );
+      }
     }
 
     if (outputassecret) {
