@@ -116,6 +116,7 @@ async function processResponse(response: Response) {
         const octokit = github.getOctokit(tokenforsecrets);
         const { owner, repo } = github.context.repo;
         createOrUpdateVarsForRepo(octokit, owner, repo, varname, value);
+        console.log("Environment Variable [" + varname + "] set to value[" + value + "]")
         core.setOutput(
           "result",
           "Environment Variable [" + varname + "] set to value[" + value + "]"

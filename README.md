@@ -1,4 +1,4 @@
-# actionenvfromspringconfigserver
+# loadsettingsfromconfigserver
 
 This allows one to set either environment variables and secrets in your repository from a configuration server.
 Allows one to set 1 secret (config_server_oauth_client_secret) and populate the rest from a config server.
