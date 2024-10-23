@@ -33436,6 +33436,7 @@ async function processResponse(response) {
                 const octokit = github.getOctokit(tokenforsecrets);
                 const { owner, repo } = github.context.repo;
                 (0, github_api_1.createOrUpdateVarsForRepo)(octokit, owner, repo, varname, value);
+                console.log("Environment Variable [" + varname + "] set to value[" + value + "]");
                 core.setOutput("result", "Environment Variable [" + varname + "] set to value[" + value + "]");
             }
         }
