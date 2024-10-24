@@ -41,6 +41,10 @@ async function main() {
     config_server_oauth_client_id,
     config_server_oauth_client_secret
   );
+
+  if (accessToken == undefined) {
+    throw new Error("Undefined accessToken")
+  }
   //  console.log("Access Token=" + accessToken)
   connectToConfigServer(baseurl, path, accessToken);
 }
