@@ -143,8 +143,8 @@ async function processResponse(response: Response) {
       }
     }
   } else {
-    core.error("Failed to fetch cloud config!");
-    throw new Error("Failed to fetch cloud config!");
+    core.error("Failed to fetch cloud config!" + response.status + "-" + response.statusText);
+    throw new Error("Failed to fetch cloud config!" + response.status + "-" + response.statusText);
   }
 }
 
