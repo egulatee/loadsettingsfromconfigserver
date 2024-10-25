@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
-import { getToken as getConfigServerOAuthToken } from "./oauth-gettoken";
+import { getAccessToken as getAccessToken } from "./oauth-gettoken";
 import { createOrUpdateSecretForRepo,createOrUpdateVarsForRepo } from "./github-api";
 
 const config_server_oauth_token_endpoint = core.getInput("config_server_oauth_token_endpoint");
@@ -36,7 +36,7 @@ const decodebase64 = stringToBoolean(decodebase64str, false);
 main();
 
 async function main() {
-  let accessToken = await getConfigServerOAuthToken(
+  let accessToken = await getAccessToken(
     config_server_oauth_token_endpoint,
     config_server_oauth_client_id,
     config_server_oauth_client_secret
