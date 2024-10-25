@@ -33377,7 +33377,7 @@ async function getSettingUsingOAuth(oauthtokendendpoint, clientid, clientsecret,
     if (accessToken == undefined) {
         throw new Error("Undefined accessToken");
     }
-    connectToConfigServer(baseurl, path, accessToken);
+    connectToConfigServer(configserverurl, path, accessToken);
 }
 async function connectToConfigServer(baseurl, path, accessToken) {
     let url = baseurl + path;
