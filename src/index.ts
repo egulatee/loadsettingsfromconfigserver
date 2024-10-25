@@ -47,7 +47,7 @@ async function getSettingUsingOAuth(oauthtokendendpoint: string, clientid: strin
   if (accessToken == undefined) {
     throw new Error("Undefined accessToken")
   }
-  connectToConfigServer(baseurl, path, accessToken);
+  connectToConfigServer(configserverurl, path, accessToken);
 
 }
 
