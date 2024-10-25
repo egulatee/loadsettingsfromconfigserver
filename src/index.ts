@@ -13,7 +13,7 @@ const use_as_token_for_github_octokit = stringToBoolean(
 
 const tokenforsecrets = core.getInput("token_for_github_octokit", { required: false });
 
-const baseurl = core.getInput("config_server_base_url", {
+const config_server_base_url = core.getInput("config_server_base_url", {
   required: true,
 });
 const path = core.getInput("path", { required: true });
@@ -34,7 +34,7 @@ main();
 
 async function main() {
 
-  getSettingUsingOAuth(config_server_oauth_token_endpoint, config_server_oauth_client_id, config_server_oauth_client_secret, baseurl, path)
+  getSettingUsingOAuth(config_server_oauth_token_endpoint, config_server_oauth_client_id, config_server_oauth_client_secret, config_server_base_url, path)
 }
 
 async function getSettingUsingOAuth(oauthtokendendpoint: string, clientid: string, clientsecret: string, configserverurl: string, configpropertypath: string) {
