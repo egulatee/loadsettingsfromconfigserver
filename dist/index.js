@@ -33374,6 +33374,9 @@ const decodebase64 = stringToBoolean(decodebase64str, false);
 main();
 async function main() {
     let accessToken = await (0, oauth_gettoken_1.getToken)(config_server_oauth_token_endpoint, config_server_oauth_client_id, config_server_oauth_client_secret);
+    if (accessToken == undefined) {
+        throw new Error("Undefined accessToken");
+    }
     //  console.log("Access Token=" + accessToken)
     connectToConfigServer(baseurl, path, accessToken);
 }
