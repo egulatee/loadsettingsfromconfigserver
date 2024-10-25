@@ -33364,20 +33364,19 @@ const property = core.getInput("propertytoretrieve", { required: true });
 const variabletoset = core.getInput("variabletoset", { required: false });
 const outputasenvvarstr = core.getInput("outputasenvvar", { required: false });
 const outputasenvvar = stringToBoolean(outputasenvvarstr, false);
-//console.log("outputasenvvar str=" + outputasenvvarstr + " converted=" + outputasenvvar)
 const outputassecretstr = core.getInput("outputassecret", { required: false });
 const outputassecret = stringToBoolean(outputassecretstr, false);
-//console.log("outputassecret str=" + outputassecretstr + " converted=" + outputassecret)
 const decodebase64str = core.getInput("decodebase64", { required: false });
 const decodebase64 = stringToBoolean(decodebase64str, false);
-//console.log("decodebase64 str=" + decodebase64str + " converted=" + decodebase64)
 main();
 async function main() {
-    let accessToken = await (0, oauth_gettoken_1.getAccessToken)(config_server_oauth_token_endpoint, config_server_oauth_client_id, config_server_oauth_client_secret);
+    getSettingUsingOAuth(config_server_oauth_token_endpoint, config_server_oauth_client_id, config_server_oauth_client_secret, baseurl, path);
+}
+async function getSettingUsingOAuth(oauthtokendendpoint, clientid, clientsecret, configserverurl, configpropertypath) {
+    let accessToken = await (0, oauth_gettoken_1.getAccessToken)(oauthtokendendpoint, clientid, clientsecret);
     if (accessToken == undefined) {
         throw new Error("Undefined accessToken");
     }
-    //  console.log("Access Token=" + accessToken)
     connectToConfigServer(baseurl, path, accessToken);
 }
 async function connectToConfigServer(baseurl, path, accessToken) {
