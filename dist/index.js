@@ -33373,7 +33373,7 @@ const decodebase64 = stringToBoolean(decodebase64str, false);
 //console.log("decodebase64 str=" + decodebase64str + " converted=" + decodebase64)
 main();
 async function main() {
-    let accessToken = await (0, oauth_gettoken_1.getToken)(config_server_oauth_token_endpoint, config_server_oauth_client_id, config_server_oauth_client_secret);
+    let accessToken = await (0, oauth_gettoken_1.getAccessToken)(config_server_oauth_token_endpoint, config_server_oauth_client_id, config_server_oauth_client_secret);
     if (accessToken == undefined) {
         throw new Error("Undefined accessToken");
     }
@@ -33496,8 +33496,8 @@ function isUndefinedEmptyOrNull(str) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getToken = getToken;
-async function getToken(endpoint, clientid, clientsecret) {
+exports.getAccessToken = getAccessToken;
+async function getAccessToken(endpoint, clientid, clientsecret) {
     const tokenEndpoint = `${endpoint}`;
     console.log("Fetching token from " + endpoint);
     const data = {
