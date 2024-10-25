@@ -33356,7 +33356,7 @@ const config_server_oauth_client_id = core.getInput("config_server_oauth_client_
 const config_server_oauth_client_secret = core.getInput("config_server_oauth_client_secret");
 const use_as_token_for_github_octokit = stringToBoolean(core.getInput("use_as_token_for_github_octokit"), false);
 const tokenforsecrets = core.getInput("token_for_github_octokit", { required: false });
-const baseurl = core.getInput("config_server_base_url", {
+const config_server_base_url = core.getInput("config_server_base_url", {
     required: true,
 });
 const path = core.getInput("path", { required: true });
@@ -33370,7 +33370,7 @@ const decodebase64str = core.getInput("decodebase64", { required: false });
 const decodebase64 = stringToBoolean(decodebase64str, false);
 main();
 async function main() {
-    getSettingUsingOAuth(config_server_oauth_token_endpoint, config_server_oauth_client_id, config_server_oauth_client_secret, baseurl, path);
+    getSettingUsingOAuth(config_server_oauth_token_endpoint, config_server_oauth_client_id, config_server_oauth_client_secret, config_server_base_url, path);
 }
 async function getSettingUsingOAuth(oauthtokendendpoint, clientid, clientsecret, configserverurl, configpropertypath) {
     let accessToken = await (0, oauth_gettoken_1.getAccessToken)(oauthtokendendpoint, clientid, clientsecret);
