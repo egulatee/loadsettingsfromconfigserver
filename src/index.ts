@@ -2,7 +2,7 @@ import * as core from "@actions/core";
 import * as github from "@actions/github";
 import { ConfigSetting, retrievePropertyFromConfigServer, SinglePropertyRetrievalParams } from "./configservice/springconfig";
 import { isUndefinedEmptyOrNull, stringToBoolean } from "./configservice/utils";
-import { createOrUpdateSecretForRepo, createOrUpdateVarsForRepo } from "./configservice/github-api";
+import { createOrUpdateSecretForRepo, createOrUpdateVarsForRepo } from "./github-api";
 
 const config_server_oauth_token_endpoint = core.getInput("config_server_oauth_token_endpoint");
 const config_server_oauth_client_id = core.getInput("config_server_oauth_client_id");
