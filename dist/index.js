@@ -33325,7 +33325,7 @@ async function createOrUpdateVarsForRepo(octokit, owner, repo, varName, varValue
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getAccessToken = getAccessToken;
-const tslog_1 = __nccwpck_require__(9664);
+const tslog_1 = __nccwpck_require__(6666);
 const log = new tslog_1.Logger({ minLevel: 3 });
 async function getAccessToken(endpoint, clientid, clientsecret) {
     const tokenEndpoint = `${endpoint}`;
@@ -33365,7 +33365,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports["default"] = retrievAllPropertiesFromConfigServer;
 exports.retrievePropertyFromConfigServer = retrievePropertyFromConfigServer;
 const oauth_gettoken_1 = __nccwpck_require__(5206);
-const tslog_1 = __nccwpck_require__(9664);
+const tslog_1 = __nccwpck_require__(6666);
 const log = new tslog_1.Logger({ minLevel: 2 });
 async function retrievAllPropertiesFromConfigServer(params) {
     log.debug("Params=" + JSON.stringify(params));
@@ -33674,14 +33674,6 @@ async function loadIntoGithubContext(setting) {
         }
     }
 }
-
-
-/***/ }),
-
-/***/ 9664:
-/***/ ((module) => {
-
-module.exports = eval("require")("tslog");
 
 
 /***/ }),
@@ -35547,6 +35539,737 @@ function parseParams (str) {
 }
 
 module.exports = parseParams
+
+
+/***/ }),
+
+/***/ 9277:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BaseLogger = exports.Runtime = void 0;
+const formatTemplate_js_1 = __nccwpck_require__(5209);
+const formatNumberAddZeros_js_1 = __nccwpck_require__(8940);
+const urlToObj_js_1 = __nccwpck_require__(1989);
+const index_js_1 = __nccwpck_require__(7369);
+exports.Runtime = index_js_1.default;
+__exportStar(__nccwpck_require__(4120), exports);
+class BaseLogger {
+    constructor(settings, logObj, stackDepthLevel = 4) {
+        this.logObj = logObj;
+        this.stackDepthLevel = stackDepthLevel;
+        this.runtime = index_js_1.default;
+        this.settings = {
+            type: settings?.type ?? "pretty",
+            name: settings?.name,
+            parentNames: settings?.parentNames,
+            minLevel: settings?.minLevel ?? 0,
+            argumentsArrayName: settings?.argumentsArrayName,
+            hideLogPositionForProduction: settings?.hideLogPositionForProduction ?? false,
+            prettyLogTemplate: settings?.prettyLogTemplate ??
+                "{{yyyy}}.{{mm}}.{{dd}} {{hh}}:{{MM}}:{{ss}}:{{ms}}\t{{logLevelName}}\t{{filePathWithLine}}{{nameWithDelimiterPrefix}}\t",
+            prettyErrorTemplate: settings?.prettyErrorTemplate ?? "\n{{errorName}} {{errorMessage}}\nerror stack:\n{{errorStack}}",
+            prettyErrorStackTemplate: settings?.prettyErrorStackTemplate ?? "  • {{fileName}}\t{{method}}\n\t{{filePathWithLine}}",
+            prettyErrorParentNamesSeparator: settings?.prettyErrorParentNamesSeparator ?? ":",
+            prettyErrorLoggerNameDelimiter: settings?.prettyErrorLoggerNameDelimiter ?? "\t",
+            stylePrettyLogs: settings?.stylePrettyLogs ?? true,
+            prettyLogTimeZone: settings?.prettyLogTimeZone ?? "UTC",
+            prettyLogStyles: settings?.prettyLogStyles ?? {
+                logLevelName: {
+                    "*": ["bold", "black", "bgWhiteBright", "dim"],
+                    SILLY: ["bold", "white"],
+                    TRACE: ["bold", "whiteBright"],
+                    DEBUG: ["bold", "green"],
+                    INFO: ["bold", "blue"],
+                    WARN: ["bold", "yellow"],
+                    ERROR: ["bold", "red"],
+                    FATAL: ["bold", "redBright"],
+                },
+                dateIsoStr: "white",
+                filePathWithLine: "white",
+                name: ["white", "bold"],
+                nameWithDelimiterPrefix: ["white", "bold"],
+                nameWithDelimiterSuffix: ["white", "bold"],
+                errorName: ["bold", "bgRedBright", "whiteBright"],
+                fileName: ["yellow"],
+                fileNameWithLine: "white",
+            },
+            prettyInspectOptions: settings?.prettyInspectOptions ?? {
+                colors: true,
+                compact: false,
+                depth: Infinity,
+            },
+            metaProperty: settings?.metaProperty ?? "_meta",
+            maskPlaceholder: settings?.maskPlaceholder ?? "[***]",
+            maskValuesOfKeys: settings?.maskValuesOfKeys ?? ["password"],
+            maskValuesOfKeysCaseInsensitive: settings?.maskValuesOfKeysCaseInsensitive ?? false,
+            maskValuesRegEx: settings?.maskValuesRegEx,
+            prefix: [...(settings?.prefix ?? [])],
+            attachedTransports: [...(settings?.attachedTransports ?? [])],
+            overwrite: {
+                mask: settings?.overwrite?.mask,
+                toLogObj: settings?.overwrite?.toLogObj,
+                addMeta: settings?.overwrite?.addMeta,
+                addPlaceholders: settings?.overwrite?.addPlaceholders,
+                formatMeta: settings?.overwrite?.formatMeta,
+                formatLogObj: settings?.overwrite?.formatLogObj,
+                transportFormatted: settings?.overwrite?.transportFormatted,
+                transportJSON: settings?.overwrite?.transportJSON,
+            },
+        };
+    }
+    log(logLevelId, logLevelName, ...args) {
+        if (logLevelId < this.settings.minLevel) {
+            return;
+        }
+        const logArgs = [...this.settings.prefix, ...args];
+        const maskedArgs = this.settings.overwrite?.mask != null
+            ? this.settings.overwrite?.mask(logArgs)
+            : this.settings.maskValuesOfKeys != null && this.settings.maskValuesOfKeys.length > 0
+                ? this._mask(logArgs)
+                : logArgs;
+        const thisLogObj = this.logObj != null ? this._recursiveCloneAndExecuteFunctions(this.logObj) : undefined;
+        const logObj = this.settings.overwrite?.toLogObj != null ? this.settings.overwrite?.toLogObj(maskedArgs, thisLogObj) : this._toLogObj(maskedArgs, thisLogObj);
+        const logObjWithMeta = this.settings.overwrite?.addMeta != null
+            ? this.settings.overwrite?.addMeta(logObj, logLevelId, logLevelName)
+            : this._addMetaToLogObj(logObj, logLevelId, logLevelName);
+        let logMetaMarkup;
+        let logArgsAndErrorsMarkup = undefined;
+        if (this.settings.overwrite?.formatMeta != null) {
+            logMetaMarkup = this.settings.overwrite?.formatMeta(logObjWithMeta?.[this.settings.metaProperty]);
+        }
+        if (this.settings.overwrite?.formatLogObj != null) {
+            logArgsAndErrorsMarkup = this.settings.overwrite?.formatLogObj(maskedArgs, this.settings);
+        }
+        if (this.settings.type === "pretty") {
+            logMetaMarkup = logMetaMarkup ?? this._prettyFormatLogObjMeta(logObjWithMeta?.[this.settings.metaProperty]);
+            logArgsAndErrorsMarkup = logArgsAndErrorsMarkup ?? this.runtime.prettyFormatLogObj(maskedArgs, this.settings);
+        }
+        if (logMetaMarkup != null && logArgsAndErrorsMarkup != null) {
+            this.settings.overwrite?.transportFormatted != null
+                ? this.settings.overwrite?.transportFormatted(logMetaMarkup, logArgsAndErrorsMarkup.args, logArgsAndErrorsMarkup.errors, this.settings)
+                : this.runtime.transportFormatted(logMetaMarkup, logArgsAndErrorsMarkup.args, logArgsAndErrorsMarkup.errors, this.settings);
+        }
+        else {
+            this.settings.overwrite?.transportJSON != null
+                ? this.settings.overwrite?.transportJSON(logObjWithMeta)
+                : this.settings.type !== "hidden"
+                    ? this.runtime.transportJSON(logObjWithMeta)
+                    : undefined;
+        }
+        if (this.settings.attachedTransports != null && this.settings.attachedTransports.length > 0) {
+            this.settings.attachedTransports.forEach((transportLogger) => {
+                transportLogger(logObjWithMeta);
+            });
+        }
+        return logObjWithMeta;
+    }
+    attachTransport(transportLogger) {
+        this.settings.attachedTransports.push(transportLogger);
+    }
+    getSubLogger(settings, logObj) {
+        const subLoggerSettings = {
+            ...this.settings,
+            ...settings,
+            parentNames: this.settings?.parentNames != null && this.settings?.name != null
+                ? [...this.settings.parentNames, this.settings.name]
+                : this.settings?.name != null
+                    ? [this.settings.name]
+                    : undefined,
+            prefix: [...this.settings.prefix, ...(settings?.prefix ?? [])],
+        };
+        const subLogger = new this.constructor(subLoggerSettings, logObj ?? this.logObj, this.stackDepthLevel);
+        return subLogger;
+    }
+    _mask(args) {
+        const maskValuesOfKeys = this.settings.maskValuesOfKeysCaseInsensitive !== true ? this.settings.maskValuesOfKeys : this.settings.maskValuesOfKeys.map((key) => key.toLowerCase());
+        return args?.map((arg) => {
+            return this._recursiveCloneAndMaskValuesOfKeys(arg, maskValuesOfKeys);
+        });
+    }
+    _recursiveCloneAndMaskValuesOfKeys(source, keys, seen = []) {
+        if (seen.includes(source)) {
+            return { ...source };
+        }
+        if (typeof source === "object" && source !== null) {
+            seen.push(source);
+        }
+        if (this.runtime.isError(source) || this.runtime.isBuffer(source)) {
+            return source;
+        }
+        else if (source instanceof Map) {
+            return new Map(source);
+        }
+        else if (source instanceof Set) {
+            return new Set(source);
+        }
+        else if (Array.isArray(source)) {
+            return source.map((item) => this._recursiveCloneAndMaskValuesOfKeys(item, keys, seen));
+        }
+        else if (source instanceof Date) {
+            return new Date(source.getTime());
+        }
+        else if (source instanceof URL) {
+            return (0, urlToObj_js_1.urlToObject)(source);
+        }
+        else if (source !== null && typeof source === "object") {
+            const baseObject = this.runtime.isError(source) ? this._cloneError(source) : Object.create(Object.getPrototypeOf(source));
+            return Object.getOwnPropertyNames(source).reduce((o, prop) => {
+                o[prop] = keys.includes(this.settings?.maskValuesOfKeysCaseInsensitive !== true ? prop : prop.toLowerCase())
+                    ? this.settings.maskPlaceholder
+                    : (() => {
+                        try {
+                            return this._recursiveCloneAndMaskValuesOfKeys(source[prop], keys, seen);
+                        }
+                        catch (e) {
+                            return null;
+                        }
+                    })();
+                return o;
+            }, baseObject);
+        }
+        else {
+            if (typeof source === "string") {
+                let modifiedSource = source;
+                for (const regEx of this.settings?.maskValuesRegEx || []) {
+                    modifiedSource = modifiedSource.replace(regEx, this.settings?.maskPlaceholder || "");
+                }
+                return modifiedSource;
+            }
+            return source;
+        }
+    }
+    _recursiveCloneAndExecuteFunctions(source, seen = []) {
+        if (this.isObjectOrArray(source) && seen.includes(source)) {
+            return this.shallowCopy(source);
+        }
+        if (this.isObjectOrArray(source)) {
+            seen.push(source);
+        }
+        if (Array.isArray(source)) {
+            return source.map((item) => this._recursiveCloneAndExecuteFunctions(item, seen));
+        }
+        else if (source instanceof Date) {
+            return new Date(source.getTime());
+        }
+        else if (this.isObject(source)) {
+            return Object.getOwnPropertyNames(source).reduce((o, prop) => {
+                const descriptor = Object.getOwnPropertyDescriptor(source, prop);
+                if (descriptor) {
+                    Object.defineProperty(o, prop, descriptor);
+                    const value = source[prop];
+                    o[prop] = typeof value === "function" ? value() : this._recursiveCloneAndExecuteFunctions(value, seen);
+                }
+                return o;
+            }, Object.create(Object.getPrototypeOf(source)));
+        }
+        else {
+            return source;
+        }
+    }
+    isObjectOrArray(value) {
+        return typeof value === "object" && value !== null;
+    }
+    isObject(value) {
+        return typeof value === "object" && !Array.isArray(value) && value !== null;
+    }
+    shallowCopy(source) {
+        if (Array.isArray(source)) {
+            return [...source];
+        }
+        else {
+            return { ...source };
+        }
+    }
+    _toLogObj(args, clonedLogObj = {}) {
+        args = args?.map((arg) => (this.runtime.isError(arg) ? this._toErrorObject(arg) : arg));
+        if (this.settings.argumentsArrayName == null) {
+            if (args.length === 1 && !Array.isArray(args[0]) && this.runtime.isBuffer(args[0]) !== true && !(args[0] instanceof Date)) {
+                clonedLogObj = typeof args[0] === "object" && args[0] != null ? { ...args[0], ...clonedLogObj } : { 0: args[0], ...clonedLogObj };
+            }
+            else {
+                clonedLogObj = { ...clonedLogObj, ...args };
+            }
+        }
+        else {
+            clonedLogObj = {
+                ...clonedLogObj,
+                [this.settings.argumentsArrayName]: args,
+            };
+        }
+        return clonedLogObj;
+    }
+    _cloneError(error) {
+        const cloned = new error.constructor();
+        Object.getOwnPropertyNames(error).forEach((key) => {
+            cloned[key] = error[key];
+        });
+        return cloned;
+    }
+    _toErrorObject(error) {
+        return {
+            nativeError: error,
+            name: error.name ?? "Error",
+            message: error.message,
+            stack: this.runtime.getErrorTrace(error),
+        };
+    }
+    _addMetaToLogObj(logObj, logLevelId, logLevelName) {
+        return {
+            ...logObj,
+            [this.settings.metaProperty]: this.runtime.getMeta(logLevelId, logLevelName, this.stackDepthLevel, this.settings.hideLogPositionForProduction, this.settings.name, this.settings.parentNames),
+        };
+    }
+    _prettyFormatLogObjMeta(logObjMeta) {
+        if (logObjMeta == null) {
+            return "";
+        }
+        let template = this.settings.prettyLogTemplate;
+        const placeholderValues = {};
+        if (template.includes("{{yyyy}}.{{mm}}.{{dd}} {{hh}}:{{MM}}:{{ss}}:{{ms}}")) {
+            template = template.replace("{{yyyy}}.{{mm}}.{{dd}} {{hh}}:{{MM}}:{{ss}}:{{ms}}", "{{dateIsoStr}}");
+        }
+        else {
+            if (this.settings.prettyLogTimeZone === "UTC") {
+                placeholderValues["yyyy"] = logObjMeta?.date?.getUTCFullYear() ?? "----";
+                placeholderValues["mm"] = (0, formatNumberAddZeros_js_1.formatNumberAddZeros)(logObjMeta?.date?.getUTCMonth(), 2, 1);
+                placeholderValues["dd"] = (0, formatNumberAddZeros_js_1.formatNumberAddZeros)(logObjMeta?.date?.getUTCDate(), 2);
+                placeholderValues["hh"] = (0, formatNumberAddZeros_js_1.formatNumberAddZeros)(logObjMeta?.date?.getUTCHours(), 2);
+                placeholderValues["MM"] = (0, formatNumberAddZeros_js_1.formatNumberAddZeros)(logObjMeta?.date?.getUTCMinutes(), 2);
+                placeholderValues["ss"] = (0, formatNumberAddZeros_js_1.formatNumberAddZeros)(logObjMeta?.date?.getUTCSeconds(), 2);
+                placeholderValues["ms"] = (0, formatNumberAddZeros_js_1.formatNumberAddZeros)(logObjMeta?.date?.getUTCMilliseconds(), 3);
+            }
+            else {
+                placeholderValues["yyyy"] = logObjMeta?.date?.getFullYear() ?? "----";
+                placeholderValues["mm"] = (0, formatNumberAddZeros_js_1.formatNumberAddZeros)(logObjMeta?.date?.getMonth(), 2, 1);
+                placeholderValues["dd"] = (0, formatNumberAddZeros_js_1.formatNumberAddZeros)(logObjMeta?.date?.getDate(), 2);
+                placeholderValues["hh"] = (0, formatNumberAddZeros_js_1.formatNumberAddZeros)(logObjMeta?.date?.getHours(), 2);
+                placeholderValues["MM"] = (0, formatNumberAddZeros_js_1.formatNumberAddZeros)(logObjMeta?.date?.getMinutes(), 2);
+                placeholderValues["ss"] = (0, formatNumberAddZeros_js_1.formatNumberAddZeros)(logObjMeta?.date?.getSeconds(), 2);
+                placeholderValues["ms"] = (0, formatNumberAddZeros_js_1.formatNumberAddZeros)(logObjMeta?.date?.getMilliseconds(), 3);
+            }
+        }
+        const dateInSettingsTimeZone = this.settings.prettyLogTimeZone === "UTC" ? logObjMeta?.date : new Date(logObjMeta?.date?.getTime() - logObjMeta?.date?.getTimezoneOffset() * 60000);
+        placeholderValues["rawIsoStr"] = dateInSettingsTimeZone?.toISOString();
+        placeholderValues["dateIsoStr"] = dateInSettingsTimeZone?.toISOString().replace("T", " ").replace("Z", "");
+        placeholderValues["logLevelName"] = logObjMeta?.logLevelName;
+        placeholderValues["fileNameWithLine"] = logObjMeta?.path?.fileNameWithLine ?? "";
+        placeholderValues["filePathWithLine"] = logObjMeta?.path?.filePathWithLine ?? "";
+        placeholderValues["fullFilePath"] = logObjMeta?.path?.fullFilePath ?? "";
+        let parentNamesString = this.settings.parentNames?.join(this.settings.prettyErrorParentNamesSeparator);
+        parentNamesString = parentNamesString != null && logObjMeta?.name != null ? parentNamesString + this.settings.prettyErrorParentNamesSeparator : undefined;
+        placeholderValues["name"] = logObjMeta?.name != null || parentNamesString != null ? (parentNamesString ?? "") + logObjMeta?.name ?? "" : "";
+        placeholderValues["nameWithDelimiterPrefix"] =
+            placeholderValues["name"].length > 0 ? this.settings.prettyErrorLoggerNameDelimiter + placeholderValues["name"] : "";
+        placeholderValues["nameWithDelimiterSuffix"] =
+            placeholderValues["name"].length > 0 ? placeholderValues["name"] + this.settings.prettyErrorLoggerNameDelimiter : "";
+        if (this.settings.overwrite?.addPlaceholders != null) {
+            this.settings.overwrite?.addPlaceholders(logObjMeta, placeholderValues);
+        }
+        return (0, formatTemplate_js_1.formatTemplate)(this.settings, template, placeholderValues);
+    }
+}
+exports.BaseLogger = BaseLogger;
+
+
+/***/ }),
+
+/***/ 8940:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.formatNumberAddZeros = void 0;
+function formatNumberAddZeros(value, digits = 2, addNumber = 0) {
+    if (value != null && isNaN(value)) {
+        return "";
+    }
+    value = value != null ? value + addNumber : value;
+    return digits === 2
+        ? value == null
+            ? "--"
+            : value < 10
+                ? "0" + value
+                : value.toString()
+        : value == null
+            ? "---"
+            : value < 10
+                ? "00" + value
+                : value < 100
+                    ? "0" + value
+                    : value.toString();
+}
+exports.formatNumberAddZeros = formatNumberAddZeros;
+
+
+/***/ }),
+
+/***/ 5209:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.formatTemplate = void 0;
+const prettyLogStyles_js_1 = __nccwpck_require__(9250);
+function formatTemplate(settings, template, values, hideUnsetPlaceholder = false) {
+    const templateString = String(template);
+    const ansiColorWrap = (placeholderValue, code) => `\u001b[${code[0]}m${placeholderValue}\u001b[${code[1]}m`;
+    const styleWrap = (value, style) => {
+        if (style != null && typeof style === "string") {
+            return ansiColorWrap(value, prettyLogStyles_js_1.prettyLogStyles[style]);
+        }
+        else if (style != null && Array.isArray(style)) {
+            return style.reduce((prevValue, thisStyle) => styleWrap(prevValue, thisStyle), value);
+        }
+        else {
+            if (style != null && style[value.trim()] != null) {
+                return styleWrap(value, style[value.trim()]);
+            }
+            else if (style != null && style["*"] != null) {
+                return styleWrap(value, style["*"]);
+            }
+            else {
+                return value;
+            }
+        }
+    };
+    const defaultStyle = null;
+    return templateString.replace(/{{(.+?)}}/g, (_, placeholder) => {
+        const value = values[placeholder] != null ? String(values[placeholder]) : hideUnsetPlaceholder ? "" : _;
+        return settings.stylePrettyLogs
+            ? styleWrap(value, settings?.prettyLogStyles?.[placeholder] ?? defaultStyle) + ansiColorWrap("", prettyLogStyles_js_1.prettyLogStyles.reset)
+            : value;
+    });
+}
+exports.formatTemplate = formatTemplate;
+
+
+/***/ }),
+
+/***/ 6666:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Logger = void 0;
+const BaseLogger_js_1 = __nccwpck_require__(9277);
+__exportStar(__nccwpck_require__(4120), exports);
+__exportStar(__nccwpck_require__(9277), exports);
+class Logger extends BaseLogger_js_1.BaseLogger {
+    constructor(settings, logObj) {
+        const isBrowser = typeof window !== "undefined" && typeof document !== "undefined";
+        const isBrowserBlinkEngine = isBrowser ? window.chrome !== undefined && window.CSS !== undefined && window.CSS.supports("color", "green") : false;
+        const isSafari = isBrowser ? /^((?!chrome|android).)*safari/i.test(navigator.userAgent) : false;
+        settings = settings || {};
+        settings.stylePrettyLogs = settings.stylePrettyLogs && isBrowser && !isBrowserBlinkEngine ? false : settings.stylePrettyLogs;
+        super(settings, logObj, isSafari ? 4 : 5);
+    }
+    log(logLevelId, logLevelName, ...args) {
+        return super.log(logLevelId, logLevelName, ...args);
+    }
+    silly(...args) {
+        return super.log(0, "SILLY", ...args);
+    }
+    trace(...args) {
+        return super.log(1, "TRACE", ...args);
+    }
+    debug(...args) {
+        return super.log(2, "DEBUG", ...args);
+    }
+    info(...args) {
+        return super.log(3, "INFO", ...args);
+    }
+    warn(...args) {
+        return super.log(4, "WARN", ...args);
+    }
+    error(...args) {
+        return super.log(5, "ERROR", ...args);
+    }
+    fatal(...args) {
+        return super.log(6, "FATAL", ...args);
+    }
+    getSubLogger(settings, logObj) {
+        return super.getSubLogger(settings, logObj);
+    }
+}
+exports.Logger = Logger;
+
+
+/***/ }),
+
+/***/ 4120:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+
+/***/ }),
+
+/***/ 9250:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.prettyLogStyles = void 0;
+exports.prettyLogStyles = {
+    reset: [0, 0],
+    bold: [1, 22],
+    dim: [2, 22],
+    italic: [3, 23],
+    underline: [4, 24],
+    overline: [53, 55],
+    inverse: [7, 27],
+    hidden: [8, 28],
+    strikethrough: [9, 29],
+    black: [30, 39],
+    red: [31, 39],
+    green: [32, 39],
+    yellow: [33, 39],
+    blue: [34, 39],
+    magenta: [35, 39],
+    cyan: [36, 39],
+    white: [37, 39],
+    blackBright: [90, 39],
+    redBright: [91, 39],
+    greenBright: [92, 39],
+    yellowBright: [93, 39],
+    blueBright: [94, 39],
+    magentaBright: [95, 39],
+    cyanBright: [96, 39],
+    whiteBright: [97, 39],
+    bgBlack: [40, 49],
+    bgRed: [41, 49],
+    bgGreen: [42, 49],
+    bgYellow: [43, 49],
+    bgBlue: [44, 49],
+    bgMagenta: [45, 49],
+    bgCyan: [46, 49],
+    bgWhite: [47, 49],
+    bgBlackBright: [100, 49],
+    bgRedBright: [101, 49],
+    bgGreenBright: [102, 49],
+    bgYellowBright: [103, 49],
+    bgBlueBright: [104, 49],
+    bgMagentaBright: [105, 49],
+    bgCyanBright: [106, 49],
+    bgWhiteBright: [107, 49],
+};
+
+
+/***/ }),
+
+/***/ 7369:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.isBuffer = exports.transportJSON = exports.transportFormatted = exports.prettyFormatErrorObj = exports.prettyFormatLogObj = exports.isError = exports.getErrorTrace = exports.getCallerStackFrame = exports.getMeta = void 0;
+const os_1 = __nccwpck_require__(857);
+const path_1 = __nccwpck_require__(6928);
+const util_1 = __nccwpck_require__(9023);
+const formatTemplate_js_1 = __nccwpck_require__(5209);
+exports["default"] = {
+    getCallerStackFrame,
+    getErrorTrace,
+    getMeta,
+    transportJSON,
+    transportFormatted,
+    isBuffer,
+    isError,
+    prettyFormatLogObj,
+    prettyFormatErrorObj,
+};
+const meta = {
+    runtime: "Nodejs",
+    runtimeVersion: process?.version,
+    hostname: os_1.hostname ? (0, os_1.hostname)() : undefined,
+};
+function getMeta(logLevelId, logLevelName, stackDepthLevel, hideLogPositionForPerformance, name, parentNames) {
+    return Object.assign({}, meta, {
+        name,
+        parentNames,
+        date: new Date(),
+        logLevelId,
+        logLevelName,
+        path: !hideLogPositionForPerformance ? getCallerStackFrame(stackDepthLevel) : undefined,
+    });
+}
+exports.getMeta = getMeta;
+function getCallerStackFrame(stackDepthLevel, error = Error()) {
+    return stackLineToStackFrame(error?.stack?.split("\n")?.filter((thisLine) => thisLine.includes("    at "))?.[stackDepthLevel]);
+}
+exports.getCallerStackFrame = getCallerStackFrame;
+function getErrorTrace(error) {
+    return error?.stack?.split("\n")?.reduce((result, line) => {
+        if (line.includes("    at ")) {
+            result.push(stackLineToStackFrame(line));
+        }
+        return result;
+    }, []);
+}
+exports.getErrorTrace = getErrorTrace;
+function stackLineToStackFrame(line) {
+    const pathResult = {
+        fullFilePath: undefined,
+        fileName: undefined,
+        fileNameWithLine: undefined,
+        fileColumn: undefined,
+        fileLine: undefined,
+        filePath: undefined,
+        filePathWithLine: undefined,
+        method: undefined,
+    };
+    if (line != null && line.includes("    at ")) {
+        line = line.replace(/^\s+at\s+/gm, "");
+        const errorStackLine = line.split(" (");
+        const fullFilePath = line?.slice(-1) === ")" ? line?.match(/\(([^)]+)\)/)?.[1] : line;
+        const pathArray = fullFilePath?.includes(":") ? fullFilePath?.replace("file://", "")?.replace(process.cwd(), "")?.split(":") : undefined;
+        const fileColumn = pathArray?.pop();
+        const fileLine = pathArray?.pop();
+        const filePath = pathArray?.pop();
+        const filePathWithLine = (0, path_1.normalize)(`${filePath}:${fileLine}`);
+        const fileName = filePath?.split("/")?.pop();
+        const fileNameWithLine = `${fileName}:${fileLine}`;
+        if (filePath != null && filePath.length > 0) {
+            pathResult.fullFilePath = fullFilePath;
+            pathResult.fileName = fileName;
+            pathResult.fileNameWithLine = fileNameWithLine;
+            pathResult.fileColumn = fileColumn;
+            pathResult.fileLine = fileLine;
+            pathResult.filePath = filePath;
+            pathResult.filePathWithLine = filePathWithLine;
+            pathResult.method = errorStackLine?.[1] != null ? errorStackLine?.[0] : undefined;
+        }
+    }
+    return pathResult;
+}
+function isError(e) {
+    return util_1.types?.isNativeError != null ? util_1.types.isNativeError(e) : e instanceof Error;
+}
+exports.isError = isError;
+function prettyFormatLogObj(maskedArgs, settings) {
+    return maskedArgs.reduce((result, arg) => {
+        isError(arg) ? result.errors.push(prettyFormatErrorObj(arg, settings)) : result.args.push(arg);
+        return result;
+    }, { args: [], errors: [] });
+}
+exports.prettyFormatLogObj = prettyFormatLogObj;
+function prettyFormatErrorObj(error, settings) {
+    const errorStackStr = getErrorTrace(error).map((stackFrame) => {
+        return (0, formatTemplate_js_1.formatTemplate)(settings, settings.prettyErrorStackTemplate, { ...stackFrame }, true);
+    });
+    const placeholderValuesError = {
+        errorName: ` ${error.name} `,
+        errorMessage: Object.getOwnPropertyNames(error)
+            .reduce((result, key) => {
+            if (key !== "stack") {
+                result.push(error[key]);
+            }
+            return result;
+        }, [])
+            .join(", "),
+        errorStack: errorStackStr.join("\n"),
+    };
+    return (0, formatTemplate_js_1.formatTemplate)(settings, settings.prettyErrorTemplate, placeholderValuesError);
+}
+exports.prettyFormatErrorObj = prettyFormatErrorObj;
+function transportFormatted(logMetaMarkup, logArgs, logErrors, settings) {
+    const logErrorsStr = (logErrors.length > 0 && logArgs.length > 0 ? "\n" : "") + logErrors.join("\n");
+    settings.prettyInspectOptions.colors = settings.stylePrettyLogs;
+    console.log(logMetaMarkup + (0, util_1.formatWithOptions)(settings.prettyInspectOptions, ...logArgs) + logErrorsStr);
+}
+exports.transportFormatted = transportFormatted;
+function transportJSON(json) {
+    console.log(jsonStringifyRecursive(json));
+    function jsonStringifyRecursive(obj) {
+        const cache = new Set();
+        return JSON.stringify(obj, (key, value) => {
+            if (typeof value === "object" && value !== null) {
+                if (cache.has(value)) {
+                    return "[Circular]";
+                }
+                cache.add(value);
+            }
+            if (typeof value === "bigint") {
+                return `${value}`;
+            }
+            if (typeof value === "undefined") {
+                return "[undefined]";
+            }
+            return value;
+        });
+    }
+}
+exports.transportJSON = transportJSON;
+function isBuffer(arg) {
+    return Buffer.isBuffer(arg);
+}
+exports.isBuffer = isBuffer;
+
+
+/***/ }),
+
+/***/ 1989:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.urlToObject = void 0;
+function urlToObject(url) {
+    return {
+        href: url.href,
+        protocol: url.protocol,
+        username: url.username,
+        password: url.password,
+        host: url.host,
+        hostname: url.hostname,
+        port: url.port,
+        pathname: url.pathname,
+        search: url.search,
+        searchParams: [...url.searchParams].map(([key, value]) => ({ key, value })),
+        hash: url.hash,
+        origin: url.origin,
+    };
+}
+exports.urlToObject = urlToObject;
 
 
 /***/ })
