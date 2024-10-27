@@ -33229,7 +33229,7 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 8133:
+/***/ 1515:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -33318,6 +33318,249 @@ async function createOrUpdateVarsForRepo(octokit, owner, repo, varName, varValue
 
 /***/ }),
 
+/***/ 5206:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getAccessToken = getAccessToken;
+const tslog_1 = __nccwpck_require__(9664);
+const log = new tslog_1.Logger({ minLevel: 3 });
+async function getAccessToken(endpoint, clientid, clientsecret) {
+    const tokenEndpoint = `${endpoint}`;
+    log.debug("Fetching access token from " + endpoint);
+    const data = {
+        grant_type: 'client_credentials',
+        client_id: clientid,
+        client_secret: clientsecret,
+    };
+    //    console.log("Data=" + JSON.stringify(data));
+    try {
+        const response = await fetch(tokenEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(data)
+        });
+        const json = await response.json();
+        log.trace("Response=" + JSON.stringify(json));
+        const tokenResponse = json;
+        return tokenResponse.access_token;
+    }
+    catch (error) {
+        log.warn('Error getting token:', error);
+        throw error;
+    }
+}
+
+
+/***/ }),
+
+/***/ 6230:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports["default"] = retrievAllPropertiesFromConfigServer;
+exports.retrievePropertyFromConfigServer = retrievePropertyFromConfigServer;
+const oauth_gettoken_1 = __nccwpck_require__(5206);
+const tslog_1 = __nccwpck_require__(9664);
+const log = new tslog_1.Logger({ minLevel: 2 });
+async function retrievAllPropertiesFromConfigServer(params) {
+    log.debug("Params=" + JSON.stringify(params));
+    const accessToken = await (0, oauth_gettoken_1.getAccessToken)(params.oauthtokendendpoint, params.configserviceclientid, params.configserviceclientsecret);
+    if (accessToken == undefined) {
+        throw new Error("Undefined accessToken");
+    }
+    //  log.debug("Params=" + JSON.stringify(params));
+    const result = await retrieveAllPropertyFromConfigServerUsingAccessToken({
+        ...params,
+        accessToken: accessToken,
+    });
+    log.debug("Result=" + JSON.stringify(result));
+    return result;
+}
+async function retrieveAllPropertyFromConfigServerUsingAccessToken(params) {
+    const url = params.configserviceurl + params.configservicepropertypath;
+    log.trace(`Connecting to ${url}`);
+    return fetch(url, {
+        //  method: "POST",
+        headers: {
+            Authorization: "Bearer " + params.accessToken,
+        },
+        cache: "no-store",
+    })
+        .then(async (response) => {
+        const result = await processAllResponse(response);
+        log.trace("Result123=" + JSON.stringify(result));
+        return result;
+    })
+        .catch((error) => {
+        //        core.error("Failed to connect to " + url);
+        //        core.setFailed(`Failed to connect to ${url}`);
+        log.warn(`Failed to connect to ${url}`);
+        log.warn(error);
+        throw error;
+    });
+}
+async function processAllResponse(response) {
+    if (response.status === 200) {
+        const responsejson = await response.json();
+        const propertySource = responsejson["propertySources"];
+        log.trace("propertySource=" + JSON.stringify(propertySource));
+        const source = propertySource[0]["source"];
+        // let json  = JSON.parse(source);
+        log.trace("Source=" + JSON.stringify(source));
+        // log.info("Source properties=" + json.length);
+        const result = [];
+        for (const object in source) {
+            log.trace("key=" + object);
+            if (object.endsWith(".name")) {
+                const keystring = removeLastOccurrence(object, ".name");
+                const name = source[keystring + ".name"];
+                const value = source[keystring + ".value"];
+                const secret = source[keystring + ".secret"];
+                const base64encoded = source[keystring + ".base64encoded"];
+                result.push({
+                    name: name,
+                    value: value,
+                    secret: secret,
+                    base64encoded: base64encoded,
+                });
+            }
+        }
+        log.trace("Properties=" + JSON.stringify(result));
+        return result;
+    }
+    else {
+        throw Error("Response status [" + response.status + "] text=[" + response.text + "]");
+    }
+}
+//
+// Single property
+//
+async function retrievePropertyFromConfigServer(params) {
+    log.debug("Params=" + JSON.stringify(params));
+    const accessToken = await (0, oauth_gettoken_1.getAccessToken)(params.oauthtokendendpoint, params.configserviceclientid, params.configserviceclientsecret);
+    if (accessToken == undefined) {
+        throw new Error("Undefined accessToken");
+    }
+    //  log.debug("Params=" + JSON.stringify(params));
+    const result = retrieveSinglePropertyFromConfigServerUsingAccessToken({
+        ...params,
+        accessToken: accessToken,
+    });
+    //  log.trace("REsult=" + JSON.stringify(result));
+    return result;
+}
+async function retrieveSinglePropertyFromConfigServerUsingAccessToken(params) {
+    const url = params.configserviceurl + params.configservicepropertypath;
+    log.trace(`Connecting to ${url}`);
+    return fetch(url, {
+        //  method: "POST",
+        headers: {
+            Authorization: "Bearer " + params.accessToken,
+        },
+        cache: "no-store",
+    })
+        .then(async (response) => {
+        const result = await processSingleResponse(response, params);
+        log.trace("Result=" + JSON.stringify(result));
+        return result;
+    })
+        .catch((error) => {
+        //        core.error("Failed to connect to " + url);
+        //        core.setFailed(`Failed to connect to ${url}`);
+        log.warn(`Failed to connect to ${url}`);
+        log.warn(error);
+        throw error;
+    });
+}
+async function processSingleResponse(response, params) {
+    if (response.status === 200) {
+        const json = await response.json();
+        const propertySource = json["propertySources"];
+        const source = propertySource[0]["source"];
+        let value = source[params.propertytoretrieve];
+        if (value != undefined && value != null && value.startsWith("base64:")) {
+            if (params.decodebase64 === true) {
+                const valuesub = value.substring(7);
+                value = atob(valuesub);
+                //        console.log("Decoded Value=" + value);
+            }
+            else {
+                log.warn("Value starts with a base64 prefix but decodebase64 has not been set");
+            }
+        }
+        // log.trace("propertytoretrieve=" + params.propertytoretrieve);
+        // log.trace("Value=" + value);
+        log.info("Successfully fetched cloud config property [" +
+            params.propertytoretrieve +
+            "] from url=" +
+            response.url);
+        log.debug("Successfully fetched cloud config property [" +
+            params.propertytoretrieve +
+            "] with value=[" +
+            value +
+            "] from url=" +
+            response.url);
+        return { name: params.propertytoretrieve, value: value };
+    }
+    else {
+        log.error("Failed to fetch cloud config!" +
+            response.status +
+            "-" +
+            response.statusText);
+        throw new Error("Failed to fetch cloud config!" +
+            response.status +
+            "-" +
+            response.statusText);
+    }
+}
+///
+function removeLastOccurrence(source, target) {
+    const lastIndex = source.lastIndexOf(target);
+    if (lastIndex === -1) {
+        return source;
+    }
+    return source.slice(0, lastIndex) + source.slice(lastIndex + target.length);
+}
+
+
+/***/ }),
+
+/***/ 3140:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.stringToBoolean = stringToBoolean;
+exports.isUndefinedEmptyOrNull = isUndefinedEmptyOrNull;
+function stringToBoolean(str, def) {
+    if (str === "") {
+        return def;
+    }
+    //  console.log("String=" + str)
+    if (str.toLowerCase() === "true") {
+        //    console.log("Returning true")
+        return true;
+    }
+    // console.log("Returning false")
+    // console.log("String=" + str)
+    return false;
+}
+function isUndefinedEmptyOrNull(str) {
+    if (str === undefined || str === null || str === "") {
+        return true;
+    }
+    return false;
+}
+
+
+/***/ }),
+
 /***/ 9407:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -33349,9 +33592,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(7484));
 const github = __importStar(__nccwpck_require__(3228));
-const springconfig_1 = __nccwpck_require__(3876);
-const utils_1 = __nccwpck_require__(1798);
-const github_api_1 = __nccwpck_require__(8133);
+const springconfig_1 = __nccwpck_require__(6230);
+const utils_1 = __nccwpck_require__(3140);
+const github_api_1 = __nccwpck_require__(1515);
 const config_server_oauth_token_endpoint = core.getInput("config_server_oauth_token_endpoint");
 const config_server_oauth_client_id = core.getInput("config_server_oauth_client_id");
 const config_server_oauth_client_secret = core.getInput("config_server_oauth_client_secret");
@@ -33373,14 +33616,14 @@ main();
 async function main() {
     let params = {
         oauthtokendendpoint: config_server_oauth_token_endpoint,
-        clientid: config_server_oauth_client_id,
-        clientsecret: config_server_oauth_client_secret,
-        configserverurl: config_server_base_url,
-        configpropertypath: path,
+        configserviceclientid: config_server_oauth_client_id,
+        configserviceclientsecret: config_server_oauth_client_secret,
+        configserviceurl: config_server_base_url,
+        configservicepropertypath: path,
         propertytoretrieve: propertytoretrieve,
         decodebase64: decodebase64,
     };
-    let setting = await (0, springconfig_1.getSettingUsingOAuth)(params);
+    let setting = await (0, springconfig_1.retrievePropertyFromConfigServer)(params);
     loadIntoGithubContext(setting);
 }
 async function loadIntoGithubContext(setting) {
@@ -33435,139 +33678,10 @@ async function loadIntoGithubContext(setting) {
 
 /***/ }),
 
-/***/ 7900:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ 9664:
+/***/ ((module) => {
 
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getAccessToken = getAccessToken;
-async function getAccessToken(endpoint, clientid, clientsecret) {
-    const tokenEndpoint = `${endpoint}`;
-    console.log("Fetching token from " + endpoint);
-    const data = {
-        grant_type: 'client_credentials',
-        client_id: clientid,
-        client_secret: clientsecret,
-    };
-    //    console.log("Data=" + JSON.stringify(data));
-    try {
-        const response = await fetch(tokenEndpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams(data)
-        });
-        let json = await response.json();
-        //        console.log("Response=" + JSON.stringify(json));
-        let tokenResponse = json;
-        return tokenResponse.access_token;
-    }
-    catch (error) {
-        console.error('Error getting token:', error);
-        throw error;
-    }
-}
-
-
-/***/ }),
-
-/***/ 3876:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getSettingUsingOAuth = getSettingUsingOAuth;
-const oauth_gettoken_1 = __nccwpck_require__(7900);
-async function getSettingUsingOAuth(params) {
-    let accessToken = await (0, oauth_gettoken_1.getAccessToken)(params.oauthtokendendpoint, params.clientid, params.clientsecret);
-    if (accessToken == undefined) {
-        throw new Error("Undefined accessToken");
-    }
-    return connectToConfigServer({ ...params, accessToken: accessToken });
-}
-async function connectToConfigServer(params) {
-    let url = params.configserverurl + params.configpropertypath;
-    console.log(`Connecting to ${url}`);
-    return fetch(url, {
-        //  method: "POST",
-        headers: {
-            Authorization: "Bearer " + params.accessToken,
-        },
-        cache: "no-store",
-    })
-        .then((response) => {
-        return processResponse(response, params);
-    })
-        .catch((error) => {
-        //        core.error("Failed to connect to " + url);
-        //        core.setFailed(`Failed to connect to ${url}`);
-        console.warn("Failed to connect to ${url}");
-        console.warn(error);
-        throw error;
-    });
-}
-async function processResponse(response, params) {
-    if (response.status === 200) {
-        console.debug("Successfully fetched cloud config!");
-        let json = await response.json();
-        let propertySource = json["propertySources"];
-        let source = propertySource[0]["source"];
-        let value = source[params.propertytoretrieve];
-        if (value.startsWith("base64:")) {
-            if (params.decodebase64 === true) {
-                let valuesub = value.substring(7);
-                value = atob(valuesub);
-                //        console.log("Decoded Value=" + value);
-            }
-            else {
-                console.warn("Value starts with a base64 prefix but decodebase64 has not been set");
-            }
-        }
-        return { name: params.propertytoretrieve, value: value };
-    }
-    else {
-        console.error("Failed to fetch cloud config!" +
-            response.status +
-            "-" +
-            response.statusText);
-        throw new Error("Failed to fetch cloud config!" +
-            response.status +
-            "-" +
-            response.statusText);
-    }
-}
-
-
-/***/ }),
-
-/***/ 1798:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.stringToBoolean = stringToBoolean;
-exports.isUndefinedEmptyOrNull = isUndefinedEmptyOrNull;
-function stringToBoolean(str, def) {
-    if (str === "") {
-        return def;
-    }
-    //  console.log("String=" + str)
-    if (str.toLowerCase() === "true") {
-        //    console.log("Returning true")
-        return true;
-    }
-    // console.log("Returning false")
-    // console.log("String=" + str)
-    return false;
-}
-function isUndefinedEmptyOrNull(str) {
-    if (str === undefined || str === null || str === "") {
-        return true;
-    }
-    return false;
-}
+module.exports = eval("require")("tslog");
 
 
 /***/ }),
