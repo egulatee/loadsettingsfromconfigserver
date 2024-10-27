@@ -19,7 +19,8 @@
     "@actions/github": "^6.0.0",
     "@octokit/core": "^5.2.0",
     "@vercel/ncc": "^0.38.2",
-    "tweetsodium": "^0.0.4"
+    "tweetsodium": "^0.0.4",
+    "tslog": "^4.9.3"
   },
   "prettier": {}
 }
