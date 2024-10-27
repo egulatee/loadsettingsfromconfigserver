@@ -1,8 +1,8 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
-import { ConfigSetting, getSettingUsingOAuth, SettingRetriavalParams } from "./springconfig";
-import { isUndefinedEmptyOrNull, stringToBoolean } from "./utils";
-import { createOrUpdateSecretForRepo, createOrUpdateVarsForRepo } from "./github-api";
+import { ConfigSetting, retrievePropertyFromConfigServer, SinglePropertyRetrievalParams } from "./configservice/springconfig";
+import { isUndefinedEmptyOrNull, stringToBoolean } from "./configservice/utils";
+import { createOrUpdateSecretForRepo, createOrUpdateVarsForRepo } from "./configservice/github-api";
 
 const config_server_oauth_token_endpoint = core.getInput("config_server_oauth_token_endpoint");
 const config_server_oauth_client_id = core.getInput("config_server_oauth_client_id");
@@ -35,17 +35,17 @@ main();
 
 async function main() {
 
-  let params : SettingRetriavalParams = {
+  let params : SinglePropertyRetrievalParams = {
     oauthtokendendpoint: config_server_oauth_token_endpoint,
-    clientid: config_server_oauth_client_id,
-    clientsecret: config_server_oauth_client_secret, 
-    configserverurl: config_server_base_url,
-    configpropertypath: path,
+    configserviceclientid: config_server_oauth_client_id,
+    configserviceclientsecret: config_server_oauth_client_secret, 
+    configserviceurl: config_server_base_url,
+    configservicepropertypath: path,
     propertytoretrieve: propertytoretrieve,
     decodebase64: decodebase64,
   }
 
-  let setting = await getSettingUsingOAuth(params)
+  let setting = await retrievePropertyFromConfigServer(params)
   loadIntoGithubContext(setting)
 }
 
