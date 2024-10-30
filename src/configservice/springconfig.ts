@@ -33,6 +33,20 @@ export default async function retrievAllPropertiesFromConfigServer(
   params: AllPropertyRetrievalParams
 )  : Promise<ConfigSetting[]> {
   log.debug("Params=" + JSON.stringify(params));
+
+  if (params.oauthtokendendpoint == null) 
+  {
+    throw new Error("oauthtokendendpoint is null");
+  } 
+  if (params.configserviceclientid == null) 
+  {
+    throw new Error("configserviceclientid is null");
+  } 
+  if (params.configserviceclientsecret == null) 
+  {
+    throw new Error("configserviceclientsecret is null");
+  } 
+  
   const accessToken = await getAccessToken(
     params.oauthtokendendpoint,
     params.configserviceclientid,

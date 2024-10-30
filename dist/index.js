@@ -33229,95 +33229,6 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 1515:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createOrUpdateSecretForRepo = createOrUpdateSecretForRepo;
-exports.createOrUpdateVarsForRepo = createOrUpdateVarsForRepo;
-// In github-api.ts
-const sodium = __importStar(__nccwpck_require__(4303));
-async function createOrUpdateSecretForRepo(octokit, owner, repo, secretName, secretValue) {
-    //    console.log("Owner=" + owner)
-    //    console.log("Repo=" + repo)
-    // Get the public key for the repo
-    const { data: publicKey } = await octokit.rest.actions.getRepoPublicKey({
-        owner,
-        repo,
-    });
-    // Encrypt the secret
-    const encryptedValue = encryptSecret(publicKey.key, secretValue);
-    // Create or update the secret
-    await octokit.rest.actions.createOrUpdateRepoSecret({
-        owner,
-        repo,
-        secret_name: secretName,
-        encrypted_value: encryptedValue,
-        key_id: publicKey.key_id,
-    });
-}
-function encryptSecret(publicKey, secretValue) {
-    const messageBytes = Buffer.from(secretValue);
-    const keyBytes = Buffer.from(publicKey, "base64");
-    const encryptedBytes = sodium.seal(messageBytes, keyBytes);
-    return Buffer.from(encryptedBytes).toString("base64");
-}
-async function createOrUpdateVarsForRepo(octokit, owner, repo, varName, varValue) {
-    let variable;
-    try {
-        variable = await octokit.rest.actions.getRepoVariable({
-            owner,
-            repo,
-            name: varName,
-        });
-        // Update repo variable
-        await octokit.rest.actions.updateRepoVariable({
-            owner,
-            repo,
-            name: varName,
-            value: varValue,
-        });
-    }
-    catch (error) {
-        console.log("Error getting variable: " + error);
-        // Create repo variable
-        await octokit.rest.actions.createRepoVariable({
-            owner,
-            repo,
-            name: varName,
-            value: varValue,
-        });
-    }
-}
-
-
-/***/ }),
-
 /***/ 5206:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
@@ -33369,6 +33280,15 @@ const tslog_1 = __nccwpck_require__(6666);
 const log = new tslog_1.Logger({ minLevel: 2 });
 async function retrievAllPropertiesFromConfigServer(params) {
     log.debug("Params=" + JSON.stringify(params));
+    if (params.oauthtokendendpoint == null) {
+        throw new Error("oauthtokendendpoint is null");
+    }
+    if (params.configserviceclientid == null) {
+        throw new Error("configserviceclientid is null");
+    }
+    if (params.configserviceclientsecret == null) {
+        throw new Error("configserviceclientsecret is null");
+    }
     const accessToken = await (0, oauth_gettoken_1.getAccessToken)(params.oauthtokendendpoint, params.configserviceclientid, params.configserviceclientsecret);
     if (accessToken == undefined) {
         throw new Error("Undefined accessToken");
@@ -33561,6 +33481,95 @@ function isUndefinedEmptyOrNull(str) {
 
 /***/ }),
 
+/***/ 8133:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.createOrUpdateSecretForRepo = createOrUpdateSecretForRepo;
+exports.createOrUpdateVarsForRepo = createOrUpdateVarsForRepo;
+// In github-api.ts
+const sodium = __importStar(__nccwpck_require__(4303));
+async function createOrUpdateSecretForRepo(octokit, owner, repo, secretName, secretValue) {
+    //    console.log("Owner=" + owner)
+    //    console.log("Repo=" + repo)
+    // Get the public key for the repo
+    const { data: publicKey } = await octokit.rest.actions.getRepoPublicKey({
+        owner,
+        repo,
+    });
+    // Encrypt the secret
+    const encryptedValue = encryptSecret(publicKey.key, secretValue);
+    // Create or update the secret
+    await octokit.rest.actions.createOrUpdateRepoSecret({
+        owner,
+        repo,
+        secret_name: secretName,
+        encrypted_value: encryptedValue,
+        key_id: publicKey.key_id,
+    });
+}
+function encryptSecret(publicKey, secretValue) {
+    const messageBytes = Buffer.from(secretValue);
+    const keyBytes = Buffer.from(publicKey, "base64");
+    const encryptedBytes = sodium.seal(messageBytes, keyBytes);
+    return Buffer.from(encryptedBytes).toString("base64");
+}
+async function createOrUpdateVarsForRepo(octokit, owner, repo, varName, varValue) {
+    let variable;
+    try {
+        variable = await octokit.rest.actions.getRepoVariable({
+            owner,
+            repo,
+            name: varName,
+        });
+        // Update repo variable
+        await octokit.rest.actions.updateRepoVariable({
+            owner,
+            repo,
+            name: varName,
+            value: varValue,
+        });
+    }
+    catch (error) {
+        console.log("Error getting variable: " + error);
+        // Create repo variable
+        await octokit.rest.actions.createRepoVariable({
+            owner,
+            repo,
+            name: varName,
+            value: varValue,
+        });
+    }
+}
+
+
+/***/ }),
+
 /***/ 9407:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -33594,7 +33603,7 @@ const core = __importStar(__nccwpck_require__(7484));
 const github = __importStar(__nccwpck_require__(3228));
 const springconfig_1 = __nccwpck_require__(6230);
 const utils_1 = __nccwpck_require__(3140);
-const github_api_1 = __nccwpck_require__(1515);
+const github_api_1 = __nccwpck_require__(8133);
 const config_server_oauth_token_endpoint = core.getInput("config_server_oauth_token_endpoint");
 const config_server_oauth_client_id = core.getInput("config_server_oauth_client_id");
 const config_server_oauth_client_secret = core.getInput("config_server_oauth_client_secret");
