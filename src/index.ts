@@ -5,21 +5,40 @@ import { isUndefinedEmptyOrNull, stringToBoolean } from "./configservice/utils";
 import { createOrUpdateSecretForRepo, createOrUpdateVarsForRepo } from "./github-api";
 
 const config_server_oauth_token_endpoint = core.getInput("config_server_oauth_token_endpoint");
+if (isUndefinedEmptyOrNull(config_server_oauth_token_endpoint)) {
+  throw new Error(`Config config_server_oauth_token_endpoint is not provided`);
+}
+
 const config_server_oauth_client_id = core.getInput("config_server_oauth_client_id");
+if (isUndefinedEmptyOrNull(config_server_oauth_client_id)) {
+  throw new Error(`Config config_server_oauth_client_id is not provided`);
+}
 const config_server_oauth_client_secret = core.getInput("config_server_oauth_client_secret");
-const use_as_token_for_github_octokit = stringToBoolean(
-  core.getInput("use_as_token_for_github_octokit"),
-  false
-);
+if (isUndefinedEmptyOrNull(config_server_oauth_client_secret)) {
+  throw new Error(`Config config_server_oauth_client_secret is not provided`);
+}
+
+const use_as_token_for_github_octokitstr = core.getInput("use_as_token_for_github_octokit")
+if (isUndefinedEmptyOrNull(use_as_token_for_github_octokitstr)) {
+  throw new Error(`Config use_as_token_for_github_octokitstr is not provided`);
+}
+const use_as_token_for_github_octokit = stringToBoolean(use_as_token_for_github_octokitstr,false);
 
 const tokenforsecrets = core.getInput("token_for_github_octokit", { required: false });
 
-const config_server_base_url = core.getInput("config_server_base_url", {
-  required: true,
-});
+const config_server_base_url = core.getInput("config_server_base_url", {  required: true,});
+if (isUndefinedEmptyOrNull(config_server_base_url)) {
+  throw new Error(`Config config_server_base_url is not provided`);
+}
 const path = core.getInput("path", { required: true });
+if (isUndefinedEmptyOrNull(path)) {
+  throw new Error(`Config path is not provided`);
+}
 
 const propertytoretrieve = core.getInput("propertytoretrieve", { required: true });
+if (isUndefinedEmptyOrNull(propertytoretrieve)) {
+  throw new Error(`Config propertytoretrieve is not provided`);
+}
 const variabletoset = core.getInput("variabletoset", { required: false });
 
 const outputasenvvarstr = core.getInput("outputasenvvar", { required: false });
