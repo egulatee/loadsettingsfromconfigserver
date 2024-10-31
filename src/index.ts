@@ -19,9 +19,6 @@ if (isUndefinedEmptyOrNull(config_server_oauth_client_secret)) {
 }
 
 const use_as_token_for_github_octokitstr = core.getInput("use_as_token_for_github_octokit")
-if (isUndefinedEmptyOrNull(use_as_token_for_github_octokitstr)) {
-  throw new Error(`Config use_as_token_for_github_octokitstr is not provided`);
-}
 const use_as_token_for_github_octokit = stringToBoolean(use_as_token_for_github_octokitstr,false);
 
 const tokenforsecrets = core.getInput("token_for_github_octokit", { required: false });
