@@ -33617,9 +33617,6 @@ if ((0, utils_1.isUndefinedEmptyOrNull)(config_server_oauth_client_secret)) {
     throw new Error(`Config config_server_oauth_client_secret is not provided`);
 }
 const use_as_token_for_github_octokitstr = core.getInput("use_as_token_for_github_octokit");
-if ((0, utils_1.isUndefinedEmptyOrNull)(use_as_token_for_github_octokitstr)) {
-    throw new Error(`Config use_as_token_for_github_octokitstr is not provided`);
-}
 const use_as_token_for_github_octokit = (0, utils_1.stringToBoolean)(use_as_token_for_github_octokitstr, false);
 const tokenforsecrets = core.getInput("token_for_github_octokit", { required: false });
 const config_server_base_url = core.getInput("config_server_base_url", { required: true, });
