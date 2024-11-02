@@ -29,6 +29,10 @@ interface TokenResponse {
           body: new URLSearchParams(data)
         })
         
+        if (response.status!== 200 ) {
+          throw new Error("Failed to retrieve access token from " + endpoint + ". Status=" + response.status + ", text=" + await response.text())
+        }
+
         const json = await response.json();
         log.trace("Response=" + JSON.stringify(json));
         const tokenResponse = json as TokenResponse
