@@ -33621,8 +33621,12 @@ if ((0, utils_1.isUndefinedEmptyOrNull)(config_server_oauth_client_secret)) {
 }
 const use_as_token_for_github_octokitstr = core.getInput("use_as_token_for_github_octokit");
 const use_as_token_for_github_octokit = (0, utils_1.stringToBoolean)(use_as_token_for_github_octokitstr, false);
-const tokenforsecrets = core.getInput("token_for_github_octokit", { required: false });
-const config_server_base_url = core.getInput("config_server_base_url", { required: true, });
+const tokenforsecrets = core.getInput("token_for_github_octokit", {
+    required: false,
+});
+const config_server_base_url = core.getInput("config_server_base_url", {
+    required: true,
+});
 if ((0, utils_1.isUndefinedEmptyOrNull)(config_server_base_url)) {
     throw new Error(`Config config_server_base_url is not provided`);
 }
@@ -33630,7 +33634,9 @@ const path = core.getInput("path", { required: true });
 if ((0, utils_1.isUndefinedEmptyOrNull)(path)) {
     throw new Error(`Config path is not provided`);
 }
-const propertytoretrieve = core.getInput("propertytoretrieve", { required: true });
+const propertytoretrieve = core.getInput("propertytoretrieve", {
+    required: true,
+});
 if ((0, utils_1.isUndefinedEmptyOrNull)(propertytoretrieve)) {
     throw new Error(`Config propertytoretrieve is not provided`);
 }
@@ -33674,31 +33680,52 @@ async function loadIntoGithubContext(setting) {
             const octokit = github.getOctokit(setting.value);
             const { owner, repo } = github.context.repo;
             (0, github_api_1.createOrUpdateVarsForRepo)(octokit, owner, repo, varname, setting.value);
-            core.setOutput("result", "Environment Variable [" + varname + "] set to value[" + setting.value + "]");
+            core.setOutput("result", "Environment Variable [" +
+                varname +
+                "] set to value[" +
+                setting.value +
+                "]");
         }
         else {
             const octokit = github.getOctokit(tokenforsecrets);
             const { owner, repo } = github.context.repo;
             (0, github_api_1.createOrUpdateVarsForRepo)(octokit, owner, repo, varname, setting.value);
-            console.log("Environment Variable [" + varname + "] set to value[" + setting.value + "]");
-            core.setOutput("result", "Environment Variable [" + varname + "] set to value[" + setting.value + "]");
+            console.log("Environment Variable [" +
+                varname +
+                "] set to value[" +
+                setting.value +
+                "]");
+            core.setOutput("result", "Environment Variable [" +
+                varname +
+                "] set to value[" +
+                setting.value +
+                "]");
         }
     }
     if (outputassecret) {
         console.log("Outputting as Secret");
-        if (use_as_token_for_github_octokit) {
-            console.log("Using the value as the Token to set Secrets");
-            //Use the fetched value as the PAT token
-            const octokit = github.getOctokit(setting.value);
+        if (use_as_token_for_github_octokit || !(0, utils_1.isUndefinedEmptyOrNull)(tokenforsecrets)) {
+            let octokit = undefined;
+            if (use_as_token_for_github_octokit) {
+                console.log("Using the value as the Token to set Secrets");
+                //Use the fetched value as the PAT token
+                octokit = github.getOctokit(setting.value);
+            }
+            else if (!(0, utils_1.isUndefinedEmptyOrNull)(tokenforsecrets)) {
+                console.log("Setting secret [" + varname + "]");
+                octokit = github.getOctokit(tokenforsecrets);
+            }
+            if (octokit == undefined) {
+                throw new Error("Could not get Octokit");
+            }
             const { owner, repo } = github.context.repo;
-            await (0, github_api_1.createOrUpdateSecretForRepo)(octokit, owner, repo, varname, setting.value);
-            core.setOutput("result", "Secret [" + varname + "] set successfully");
-        }
-        else if (!(0, utils_1.isUndefinedEmptyOrNull)(tokenforsecrets)) {
-            console.log("Setting secret [" + varname + "]");
-            const octokit = github.getOctokit(tokenforsecrets);
-            const { owner, repo } = github.context.repo;
-            await (0, github_api_1.createOrUpdateSecretForRepo)(octokit, owner, repo, varname, setting.value);
+            try {
+                await (0, github_api_1.createOrUpdateSecretForRepo)(octokit, owner, repo, varname, setting.value);
+            }
+            catch (error) {
+                console.log("Error=" + error);
+                await (0, github_api_1.createOrUpdateSecretForRepo)(octokit, owner, repo, varname, setting.value);
+            }
             core.setOutput("result", "Secret [" + varname + "] set successfully");
         }
     }
