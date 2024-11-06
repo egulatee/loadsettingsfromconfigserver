@@ -33237,7 +33237,7 @@ function wrappy (fn, cb) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getAccessToken = getAccessToken;
 const tslog_1 = __nccwpck_require__(6666);
-const log = new tslog_1.Logger({ minLevel: 3 });
+const log = new tslog_1.Logger({ minLevel: 2 });
 async function getAccessToken(endpoint, clientid, clientsecret) {
     const tokenEndpoint = `${endpoint}`;
     log.debug("Fetching access token from " + endpoint);
