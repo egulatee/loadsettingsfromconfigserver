@@ -1,6 +1,6 @@
 import { getAccessToken } from "./oauth-gettoken";
 import { Logger, ILogObj } from "tslog";
-const log: Logger<ILogObj> = new Logger({ minLevel: 3 });
+const log: Logger<ILogObj> = new Logger({ minLevel: 2 });
 
 export type ConfigSetting = {
   name: string;
