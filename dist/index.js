@@ -33280,7 +33280,7 @@ exports["default"] = retrievAllPropertiesFromConfigServer;
 exports.retrievePropertyFromConfigServer = retrievePropertyFromConfigServer;
 const oauth_gettoken_1 = __nccwpck_require__(5206);
 const tslog_1 = __nccwpck_require__(6666);
-const log = new tslog_1.Logger({ minLevel: 3 });
+const log = new tslog_1.Logger({ minLevel: 2 });
 async function retrievAllPropertiesFromConfigServer(params) {
     log.debug("Params=" + JSON.stringify(params));
     if (params.oauthtokendendpoint == null) {
