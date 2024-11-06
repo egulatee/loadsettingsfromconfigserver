@@ -1,5 +1,5 @@
 import { Logger, ILogObj } from "tslog";
-const log: Logger<ILogObj> = new Logger({minLevel: 3});
+const log: Logger<ILogObj> = new Logger({minLevel: 2});
 
 interface TokenResponse {
     access_token: string;
